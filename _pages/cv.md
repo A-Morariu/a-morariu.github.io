@@ -1,6 +1,6 @@
 ---
 layout: archive
-title: "CV"
+title: "Career highlights"
 permalink: /cv/
 author_profile: true
 redirect_from:
@@ -8,6 +8,12 @@ redirect_from:
 ---
 
 {% include base_path %}
+
+Since I come from North America, we make a point to distinguish between our *resume* and our *CV*. It seems silly but here are both of them if you are interested! 
+
+| Resume | CV       |
+|:--------|:-------:|
+| [Professional career](http://a-morariu.github.io/files/Resume_AMorariu.pdf) | [Academic career](http://a-morariu.github.io/files/CV_AMorariu.pdf)   |
 
 Education
 ======

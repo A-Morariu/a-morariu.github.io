@@ -13,11 +13,11 @@ display some of my work and interests. You can find some of my projects, talks,
 and the occasional blog post about stuff I've found cool and thought was worth
 sharing.
 
-# A bit about me
+## A bit about me
 
 Some stuff about me
 
-# Core interests
+## Core interests
 
 1. interest 1
 
