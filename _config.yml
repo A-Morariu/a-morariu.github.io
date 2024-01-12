@@ -7,7 +7,7 @@
 
 # Site Settings
 locale: "en-US"
-title: "Insights to my work"
+title: "Alin Morariu"
 title_separator: "-"
 name: &name "Alin Morariu"
 description: &description "Computational epidemiologist"
