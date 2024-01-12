@@ -15,32 +15,21 @@ sharing.
 
 ## A bit about me
 
-Some stuff about me
+I am a PhD student at Lancaster University in the North West of the UK,
+currently supervised by Prof. Chris Jewell and Prof. Paul Fearnhead. My research
+focuses on computational challenges for fitting stochastic epidemic models,
+specifically MCMC algorithms which find parameter values and estimate missing
+data for spatio-temporal models.
 
 ## Core interests
 
-1. interest 1
+1. Epidemic modelling
+2. MCMC algorithms
+3. Parallel and cloud computing
+4. Software engineering
+5. Teaching statistics
 
-2. interest 2
-
-# Getting started
-
-1. Register a GitHub account if you don't have one and confirm your e-mail
-   (required!)
-1. Fork
-   [this repository](https://github.com/academicpages/academicpages.github.io)
-   by clicking the "fork" button in the top right.
-1. Go to the repository's settings (rightmost item in the tabs that start with
-   "Code", should be below "Unwatch"). Rename the repository "[your GitHub
-   username].github.io", which will also be your website's URL.
-1. Set site-wide configuration and create content & metadata (see below -- also
-   see [this set of diffs](http://archive.is/3TPas) showing what files were
-   changed to set up [an example site](https://getorg-testacct.github.io) for a
-   user with the username "getorg-testacct")
-1. Upload any files (like PDFs, .zip files, etc.) to the files/ directory. They
-   will appear at https://[your GitHub username].github.io/files/example.pdf.
-1. Check status by going to the repository settings, in the "GitHub pages"
-   section
+If you have any questions about these please get in touch! I'd love to chat.
 
 ## Site-wide configuration
 
@@ -73,15 +62,3 @@ or
 [Jupyter notebook](https://github.com/academicpages/academicpages.github.io/blob/master/talkmap.ipynb),
 which creates the HTML for the map based on the contents of the \_talks
 directory).
-
-**Markdown generator**
-
-I have also created
-[a set of Jupyter notebooks](https://github.com/academicpages/academicpages.github.io/tree/master/markdown_generator)
-that converts a CSV containing structured data about talks or presentations into
-individual markdown files that will be properly formatted for the academicpages
-template. The sample CSVs in that directory are the ones I used to create my own
-personal website at stuartgeiger.com. My usual workflow is that I keep a
-spreadsheet of my publications and talks, then run the code in these notebooks
-to generate the markdown files, then commit and push them to the GitHub
-repository.
