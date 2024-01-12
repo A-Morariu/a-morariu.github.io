@@ -16,14 +16,14 @@ found on this page.
 What are the differences you may wonder? Here's what I've gathered over the
 years:
 
-| Resume                                                               |                  CV                   |
-| :------------------------------------------------------------------- | :-----------------------------------: |
-| <ul><li>Bullet point form focusing on your achievements in jobs</li> | <ul><li>item1</li><li>item2</li></ul> |
-| <li>item2</li></ul>                                                  |          <li>item2</li></ul>          |
+| Resume                                                    |                             CV                              |
+| :-------------------------------------------------------- | :---------------------------------------------------------: |
+| - Bullet point form focusing on your achievements in jobs |               -Full details of every position               |
+| -Format is up to you! Make it your own                    | -Rigid/"boring" format - make it easy to read top to bottom |
 
 # Resume
 
-<iframe src="/files/Resume_AMorariu.pdf" width="100%" height="500" frameborder="no" border="0" marginwidth="0" marginheight="0"></iframe>
+<iframe src="/files/Resume_AMorariu.pdf" width="80%" height="50%" frameborder="no" border="0" marginwidth="0.25" marginheight="0.25"></iframe>
 
 # CV
 
