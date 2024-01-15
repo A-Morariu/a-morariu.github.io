@@ -46,8 +46,10 @@ recorded/measured) data set. However, it is good practice to check if how well
 our model mimics the real data and we do that by simulating from the model
 itself. Take this week's first question where the the proposed model is
 
-$$x_t = at + e_t $$
-$$ e*t \sim*{iid} N(0, \sigma^2_e)$$
+```math
+x_t = at + e_t
+e*t \sim_{iid} N(0, \sigma^2_e)
+```
 
 Looking at this equation we see that each measured quantity (i.e. data point) at
 time stamp $t$ is a function of a constant $a$ multiplied by the time stamp $t$
@@ -109,17 +111,16 @@ plt.show()
 
 ![png](MATH338_files/MATH338_7_0.png)
 
-```python
-
-```
-
 This is a very simple example where the time is a dependent variable. Often
 times this is not the case in real world examples. More often, you will get a
 time series where one variable depends on the previous one so we have to think
 recursively. Let's try modifying the code above to reflect that.
 
 **_Problem_**: Simulate a data set of 100 points from the following model.
-\begin{equation} x*t = a x*{t-1} + e_t \end{equation}
+
+```math
+x*t = a x*{t-1} + e_t
+```
 
 We will follow the same format as before! The nice thing about good code is that
 it is easy to reuse (more on this later).
