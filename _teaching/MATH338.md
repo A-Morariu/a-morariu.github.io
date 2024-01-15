@@ -119,7 +119,7 @@ recursively. Let's try modifying the code above to reflect that.
 **_Problem_**: Simulate a data set of 100 points from the following model.
 
 ```math
-x*t = a x*{t-1} + e_t
+x_t = a x_{t-1} + e_t
 ```
 
 We will follow the same format as before! The nice thing about good code is that
