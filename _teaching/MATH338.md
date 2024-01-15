@@ -48,7 +48,7 @@ itself. Take this week's first question where the the proposed model is
 
 ```math
 x_t = at + e_t
-e*t \sim_{iid} N(0, \sigma^2_e)
+e_t \sim_{iid} N(0, \sigma^2_e)
 ```
 
 Looking at this equation we see that each measured quantity (i.e. data point) at
