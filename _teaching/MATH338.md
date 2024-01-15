@@ -8,6 +8,8 @@ date: 2024-01-15
 location: "Lancaster, United Kingdom"
 ---
 
+Extra (and interesting) material for MATH338/458
+
 ```python
 # preamble - import necessary libraries
 
