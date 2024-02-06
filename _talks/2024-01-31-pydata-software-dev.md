@@ -10,5 +10,4 @@ location: "Lancaster, United Kingdom"
 
 *Description:* As coders, we often build up vast amounts of code that can be used repeatedly and potentially shared with others to make their lives easier. How can we turn those banks of code into libraries? This talk will explore the journey I took to becoming a software developer and the lessons I learned along the way as someone who was not a computer scientist first.
 
-Slides previewed below.
-<embed src="{{ site.baseurl }}/files/slides/SoftwareLifeCycle_PydataJan2024_AMorariu.pdf" width="600" height="700" type='application/pdf'>
+[Slides can be downloaded here](files/slides/SoftwareLifeCycle_PydataJan2024_AMorariu.pdf)
