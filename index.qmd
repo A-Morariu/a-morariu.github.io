@@ -8,6 +8,9 @@ about:
     - icon: github
       text: Github
       href: https://github.com/A-Morariu
+    - icon: scholar 
+      text: Google Scholar 
+      href: https://scholar.google.com/citations?hl=en&user=kwg0UwwAAAAJ
 ---
 
 ```{python}
@@ -19,9 +22,8 @@ Hi, I’m Alin! Welcome to my website. I will be using this site as a way to dis
 
 # A bit about me
 
-I am a PhD student at Lancaster University in the North West of the UK, currently supervised by Prof. Chris Jewell and Prof. Paul Fearnhead. My research focuses on computational challenges for fitting stochastic epidemic models, specifically MCMC algorithms which find parameter values and estimate missing data for spatio-temporal models.
+I am a PhD student at Lancaster University in the North West of the UK, currently supervised by [Prof. Chris Jewell](https://scholar.google.com/citations?user=BF1RFL8AAAAJ&hl=en) and [Prof. Paul Fearnhead](https://scholar.google.co.uk/citations?user=_21NhC8AAAAJ&hl=en). My research focuses on computational challenges for fitting stochastic epidemic models, specifically MCMC algorithms which find parameter values and estimate missing data for spatio-temporal models.
 
-# Main interests 
 ## Research interests
 ::: {.callout-tip collapse="true"}
 ### Epidemic modelling
