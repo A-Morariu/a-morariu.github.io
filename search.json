@@ -11,6 +11,20 @@
     "href": "index.html",
     "title": "Personal website, blog and more",
     "section": "",
-    "text": "print('Hello world!')\n\nHello world!\n\n\n\nHi, I’m Alin! Welcome to my website. I will be using this site as a way to display some of my work and interests. You can find some of my projects, talks, and the occasional blog post about stuff I’ve found cool and thought was worth sharing.\n\n\nA bit about me\nI am a PhD student at Lancaster University in the North West of the UK, currently supervised by Prof. Chris Jewell and Prof. Paul Fearnhead. My research focuses on computational challenges for fitting stochastic epidemic models, specifically MCMC algorithms which find parameter values and estimate missing data for spatio-temporal models.\n\n\nMain interests\n\nEpidemic modelling\nLikelihood inference and MCMC algorithms\nParallel and cloud computing\nSoftware engineering\nTeaching statistics\nCycling\n\nIf you have any questions about these please get in touch!"
+    "text": "print(my_intro)\nHi, I’m Alin! Welcome to my website. I will be using this site as a way to display some of my work and interests. You can find some of my projects, talks, and the occasional blog post about stuff I’ve found cool and thought was worth sharing."
+  },
+  {
+    "objectID": "index.html#research-interests",
+    "href": "index.html#research-interests",
+    "title": "Personal website, blog and more",
+    "section": "Research interests",
+    "text": "Research interests\n\n\n\n\n\n\nEpidemic modelling\n\n\n\n\n\nEpidemic models provide useful insight into how we can manage the spread of disease in both human and animal populations. They can be powerful tools for public policy and pose interesting computational challenges.\n\n\n\n\n\n\n\n\n\nLikelihood inference and MCMC\n\n\n\n\n\nTo do…\n\n\n\n\n\n\n\n\n\nParallel and high performance computing\n\n\n\n\n\nTo do…"
+  },
+  {
+    "objectID": "index.html#personal-and-hobbies",
+    "href": "index.html#personal-and-hobbies",
+    "title": "Personal website, blog and more",
+    "section": "Personal and hobbies",
+    "text": "Personal and hobbies\n\n\n\n\n\n\nCycling\n\n\n\n\n\nA very famous man once said “I like to ride my bicycle” and I think he was on to something there.\n\n\n\n\n\n\n\n\n\nPhotography\n\n\n\n\n\nI take picture… mostly with a very little camera.\n\n\n\nIf you have any questions about these please get in touch!"
   }
 ]
