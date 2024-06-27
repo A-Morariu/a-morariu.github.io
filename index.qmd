@@ -1,12 +1,25 @@
 ---
 title: "Personal website, blog and more"
+about:
+  template: trestles
+  image: pictures/personal_media/alin-headshot.jpg
+  image-shape: round
+  links:
+    - icon: github
+      text: Github
+      href: https://github.com/A-Morariu
 ---
 
 ```{python}
 print('Hello world!')
 ```
 
+
+:::{#hero-heading}
+
 Hi, I’m Alin! Welcome to my website. I will be using this site as a way to display some of my work and interests. You can find some of my projects, talks, and the occasional blog post about stuff I’ve found cool and thought was worth sharing.
+
+:::
 
 # A bit about me
 
