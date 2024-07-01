@@ -95,6 +95,13 @@
     "href": "posts/2024-01-01-first-post/index.html",
     "title": "blog post title",
     "section": "",
-    "text": "Sample post…"
+    "text": "Sample post… 1"
+  },
+  {
+    "objectID": "posts/2024-01-01-first-post/index.html#footnotes",
+    "href": "posts/2024-01-01-first-post/index.html#footnotes",
+    "title": "blog post title",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nExample footnote so later me remembers how to do it.↩︎"
   }
 ]
