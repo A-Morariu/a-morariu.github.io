@@ -1,0 +1,20 @@
+/*-- scss:defaults --*/
+
+/// Colors 
+$cream: #FDFBF7;
+$light-gray: #adb5bd; 
+
+
+// Inline code
+$code-bg: $cream;
+
+// Callout 
+$callout-color-note: $light-gray;
+
+/*-- scss:rules --*/
+
+h1, h2 {
+  letter-spacing: 5px;
+  font-weight: 800; 
+  color: darkcyan;
+}

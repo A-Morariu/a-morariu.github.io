@@ -29,9 +29,8 @@ website:
 format:
   html:
     theme: 
-      light: lux
-      dark: slate
-    css: styles.css
+      light: [lux, styles.scss]
+      dark: [slate, styles.scss]
     toc: true
 
 

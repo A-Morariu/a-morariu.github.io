@@ -1,9 +1,10 @@
 ---
-title: "Personal website, blog and more"
+title: "Alin Morariu"
+subtitle: "Personal website, blog, and more"
 about:
   template: trestles
   image: pictures/personal_media/alin-headshot.jpg
-  image-shape: round
+  image-shape: rounded
   links:
     - icon: github
       text: Github
@@ -25,24 +26,24 @@ Hi, I’m Alin! Welcome to my website. I will be using this site as a way to dis
 I am a PhD student at Lancaster University in the UK, currently supervised by [Prof. Chris Jewell](https://scholar.google.com/citations?user=BF1RFL8AAAAJ&hl=en) and [Prof. Paul Fearnhead](https://scholar.google.co.uk/citations?user=_21NhC8AAAAJ&hl=en). My research focuses on computational challenges for fitting stochastic epidemic models, specifically MCMC algorithms spatio-temporal models for spread of disease. 
 
 ## Research interests
-::: {.callout-tip collapse="true"}
+::: {.callout-note collapse="true"}
 ### Epidemic modelling
 Epidemic models provide useful insight into how we can manage the spread of disease in both human and animal populations. They can be powerful tools for public policy and pose interesting computational challenges. 
 :::
-::: {.callout-tip collapse="true"}
+::: {.callout-note collapse="true"}
 ### Likelihood inference and MCMC
 Bayesian methods provide robust estimation for complex models where analytical solutions are often infeasible. They allow for exploration of high-dimensional parameter spaces 
 :::
-::: {.callout-tip collapse="true"}
+::: {.callout-note collapse="true"}
 ### Parallel and high performance computing
 One of the best ways to increase the efficiency of fitting models is to take advantage of modern hardware like GPUs and HPC clusters. This can be done by implementing algorithms so they can be run in parallel across more than one device. 
 :::
 ## Personal and hobbies
-::: {.callout-tip collapse="true"}
+::: {.callout-note collapse="true"}
 ### Cycling
 A very famous man once said "I like to ride my bicycle" and I think he was on to something there.
 :::
-::: {.callout-tip collapse="true"}
+::: {.callout-note collapse="true"}
 ### Photography
 I take picture... mostly with a very little camera. 
 :::
