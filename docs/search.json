@@ -82,5 +82,19 @@
     "title": "Resume and CV",
     "section": "Academic",
     "text": "Academic\n\n    It appears you don't have a PDF plugin for this browser.\n    No biggie... you can click here to\n    download the PDF file."
+  },
+  {
+    "objectID": "posts.html",
+    "href": "posts.html",
+    "title": "My Blog",
+    "section": "",
+    "text": "blog post title\n\n\n\nother\n\n\n\nblog post description (appears underneath the title in smaller text) which is included on the listing page\n\n\n\nAlin Morariu\n\n\nJan 1, 2024\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/2024-01-01-first-post/index.html",
+    "href": "posts/2024-01-01-first-post/index.html",
+    "title": "blog post title",
+    "section": "",
+    "text": "Sample post…"
   }
 ]

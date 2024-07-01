@@ -1,0 +1,21 @@
+---
+title: "blog post title"
+description: "blog post description (appears underneath the title in smaller text) which is included on the listing page"
+author:
+  - name: Alin Morariu
+    url: https://a-morariu.github.io/
+    #orcid: 0000-0002-5300-3075
+    affiliation: Lancaster University
+    affiliation-url: https://www.lancaster.ac.uk/maths/
+date: 01-01-2024
+categories: [other] # self-defined categories
+#citation: 
+#  url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/ 
+#image: preview-image.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+---
+
+Sample post... [^1]
+
+
+[^1]: Example footnote so later me remembers how to do it. 

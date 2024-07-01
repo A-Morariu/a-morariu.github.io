@@ -10,6 +10,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: posts.qmd
+        text: Blog posts
     right:
       - href: career.qmd
         text: Resume
@@ -17,7 +19,9 @@ website:
 
 format:
   html:
-    theme: lux
+    theme: 
+      light: lux
+      dark: slate
     css: styles.css
     toc: true
 
