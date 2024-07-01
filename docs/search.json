@@ -4,7 +4,7 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "This is my website."
+    "text": "I’m a PhD student at Lancaster University with an interest in Bayesian statistics and all the computational aspects that come along with that. This includes inference algorithms like MCMC, probablistic programming, efficient implementations, and software for making this more accessible. In the past, I’ve worked as a data scientist and analyst in the finance industry as well as a researcher in a hospital.\n\n\nLancaster University | Lancaster, UK PhD in Statistics | Jan 2022 - Dec 2025\nToronto Metropolitan Univeristy | Toronto, Canada MSc in Applied Mathematics | Sept 2019 - June 2021\nUniversity of Toronto, St George | Toronto, Canada HBSc in Statistics and Mathematics | Sept 2014 - June 2019\n\n\n\nMy previous work experience can be found on my resume or my LinkedIn"
   },
   {
     "objectID": "index.html",
@@ -26,5 +26,61 @@
     "title": "Personal website, blog and more",
     "section": "Personal and hobbies",
     "text": "Personal and hobbies\n\n\n\n\n\n\nCycling\n\n\n\n\n\nA very famous man once said “I like to ride my bicycle” and I think he was on to something there.\n\n\n\n\n\n\n\n\n\nPhotography\n\n\n\n\n\nI take picture… mostly with a very little camera.\n\n\n\nIf you have any questions about these please get in touch!"
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "About",
+    "section": "",
+    "text": "Lancaster University | Lancaster, UK PhD in Statistics | Jan 2022 - Dec 2025\nToronto Metropolitan Univeristy | Toronto, Canada MSc in Applied Mathematics | Sept 2019 - June 2021\nUniversity of Toronto, St George | Toronto, Canada HBSc in Statistics and Mathematics | Sept 2014 - June 2019"
+  },
+  {
+    "objectID": "about.html#experience",
+    "href": "about.html#experience",
+    "title": "About",
+    "section": "",
+    "text": "My previous work experience can be found on my resume or my LinkedIn"
+  },
+  {
+    "objectID": "about.html#get-in-touch",
+    "href": "about.html#get-in-touch",
+    "title": "About",
+    "section": "Get in touch!",
+    "text": "Get in touch!\nBest ways of contacting me is through email!\n\\(\\rightarrow\\) a.morariu@lancaster.ac.uk \\(\\leftarrow\\)"
+  },
+  {
+    "objectID": "career.html#academic-cv",
+    "href": "career.html#academic-cv",
+    "title": "Resume and CV",
+    "section": "Academic CV",
+    "text": "Academic CV\n\n\n\n\n    It appears you don't have a PDF plugin for this browser.\n    No biggie... you can click here to\n    download the PDF file."
+  },
+  {
+    "objectID": "career.html",
+    "href": "career.html",
+    "title": "Resume and CV",
+    "section": "",
+    "text": "It appears you don't have a PDF plugin for this browser.\n    No biggie... you can click here to\n    download the PDF file."
+  },
+  {
+    "objectID": "career.html#resume",
+    "href": "career.html#resume",
+    "title": "Resume and CV",
+    "section": "",
+    "text": "It appears you don't have a PDF plugin for this browser.\n    No biggie... you can click here to\n    download the PDF file."
+  },
+  {
+    "objectID": "career.html#professional",
+    "href": "career.html#professional",
+    "title": "Resume and CV",
+    "section": "",
+    "text": "It appears you don't have a PDF plugin for this browser.\n    No biggie... you can click here to\n    download the PDF file."
+  },
+  {
+    "objectID": "career.html#academic",
+    "href": "career.html#academic",
+    "title": "Resume and CV",
+    "section": "Academic",
+    "text": "Academic\n\n    It appears you don't have a PDF plugin for this browser.\n    No biggie... you can click here to\n    download the PDF file."
   }
 ]

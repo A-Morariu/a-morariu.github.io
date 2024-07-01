@@ -1,0 +1,21 @@
+---
+title: "Resume and CV"
+---
+
+## Professional 
+```{=html}
+<object data="Resume_AMorariu.pdf" type="application/pdf" width="95%" height="100%" style="min-height:50vh;">
+    <p>It appears you don't have a PDF plugin for this browser.
+    No biggie... you can <a href="slides123.pdf">click here to
+    download the PDF file.</a></p>
+</object>
+```
+## Academic
+
+```{=html}
+<object data="CV_AMorariu.pdf" type="application/pdf" width="95%" height="100%" style="min-height:100vh;">
+    <p>It appears you don't have a PDF plugin for this browser.
+    No biggie... you can <a href="slides123.pdf">click here to
+    download the PDF file.</a></p>
+</object>
+```

@@ -11,6 +11,8 @@ website:
       - href: index.qmd
         text: Home
     right:
+      - href: career.qmd
+        text: Resume
       - about.qmd
 
 format:
