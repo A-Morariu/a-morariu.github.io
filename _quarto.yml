@@ -4,6 +4,7 @@ project:
 
 website:
   title: "Alin Morariu"
+  favicon: a-solid.svg
   navbar:
     background: dark
     search: true
