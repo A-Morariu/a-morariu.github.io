@@ -18,7 +18,7 @@
     "href": "index.html#research-interests",
     "title": "Personal website, blog and more",
     "section": "Research interests",
-    "text": "Research interests\n\n\n\n\n\n\nEpidemic modelling\n\n\n\n\n\nEpidemic models provide useful insight into how we can manage the spread of disease in both human and animal populations. They can be powerful tools for public policy and pose interesting computational challenges.\n\n\n\n\n\n\n\n\n\nLikelihood inference and MCMC\n\n\n\n\n\nTo do…\n\n\n\n\n\n\n\n\n\nParallel and high performance computing\n\n\n\n\n\nTo do…"
+    "text": "Research interests\n\n\n\n\n\n\nEpidemic modelling\n\n\n\n\n\nEpidemic models provide useful insight into how we can manage the spread of disease in both human and animal populations. They can be powerful tools for public policy and pose interesting computational challenges.\n\n\n\n\n\n\n\n\n\nLikelihood inference and MCMC\n\n\n\n\n\nBayesian methods provide robust estimation for complex models where analytical solutions are often infeasible. They allow for exploration of high-dimensional parameter spaces\n\n\n\n\n\n\n\n\n\nParallel and high performance computing\n\n\n\n\n\nOne of the best ways to increase the efficiency of fitting models is to take advantage of modern hardware like GPUs and HPC clusters. This can be done by implementing algorithms so they can be run in parallel across more than one device."
   },
   {
     "objectID": "index.html#personal-and-hobbies",
