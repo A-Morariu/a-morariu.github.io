@@ -1,0 +1,165 @@
+---
+title: "Simulating an epidemic"
+description: "We take a look at the popular (and simple) chain-binomial model for simulating an epidemic"
+author:
+  - name: Alin Morariu
+    #orcid: 0000-0002-5300-3075
+    affiliation: Lancaster University
+    affiliation-url: https://www.lancaster.ac.uk/maths/
+date: 01-01-2024
+categories: [epidemics, simulation] # self-defined categories
+#image: preview-image.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+code-annotations: hover
+lightbox: auto
+---
+
+When I started my PhD two years ago, I had never looked at an epidemic model outside of an elementry differential equations course. Fast forward two years and one Covid-19 later, the bulk of my work is centred around epidemic models. More specifically, stochastic epidemic models. Differential equation models are simple and easy to use but are often too rigid since they don't reflect the randomness we see in the real world when it comes to epidemic models. 
+
+This post is going to be a tutorial for implementing/coding a chain binomial epidemic model in Python. This model is sometimes referred to as the Reed-Frost model and was initially used to model epidemic spread in the late 1920s (more details[^1]). 
+
+## Reed-Frost model 
+The Reed-Frost model is a simple and intuitive mathematical model used to understand how infectious diseases spread through a population. This model helps us predict the number of people who will become infected over time, given some initial conditions.
+
+### Intuition 
+Imagine a group of people where some are initially infected with a disease, and others are susceptible but not yet infected. The Reed-Frost model works by dividing time into discrete steps[^2], such as days or weeks. At each time step, each susceptible person has a chance of getting infected based on their contact with infectious individuals.
+
+At the beginning of the outbreak, the population is divided into two groups: susceptible (those who can get infected) and infectious (those who are currently infected). If we were to think of this as a graphical representation, it would be a 2 compartment model. 
+```{mermaid}
+flowchart LR
+  A(Susceptible) --> B(Infected)
+```
+
+Now the question becomes how do individuals move between these states. The model uses a probability parameter to represent the likelihood that a susceptible person will get infected upon contact with an infectious person. This probability is often denoted as $p$. 
+
+The process unfolds over a series of discrete time steps. At each step, every susceptible individual has a chance to become infected if they come into contact with any infectious individuals (this is a very loose way to apply some mathematical structure to a very complex infection transmission mechanism).
+
+The number of new infections at each time step depends on the number of susceptible and infectious individuals and the probability of transmission. The model assumes that once a person is infected, they remain infectious for only one time step.
+
+### Why this is a good starting
+The Reed-Frost model is powerful because it captures the essential dynamics of disease transmission in a straightforward manner. It considers the key factors that drive an epidemic: the number of susceptible individuals, the number of infectious individuals, and the probability of transmission. By iterating this process over multiple time steps, the model can simulate the spread of an infection and help predict its potential impact on the population.
+
+## Python implementation 
+For this tutorial, I am going to try to use as few packages as possible so I'm going to restrict myself to *only* `numpy` and `pandas`. The rest of the code will be base Python. 
+
+So what do we have so far? We know we're going to be working with the Reed-Frost model which is a 2 state compartmental model. This is the class of the model and *not* a specific model. For that we need to add more structure. We need to know the size of population the disease is spreading through, the duration of each step in which events are happening (recall this is a discrete time model), and the last is going to be the transition rate or epidemic dynamics (how the disease is transmitted). The assumptions are as follows: 
+1. 100 epidemic units[^3] with 99 susceptibles and 1 infected units. This is represented as a vector $[S_0, I_0] = [99,1]$ (the subscript $i$ is the time period).
+2. Time period is going to be daily so we set the time delta $\triangle d = 1$. 
+3. Epidemic dynamics will be a density based transmission where we 'count' the number of pairwise interactions between infectious units and susceptibles and divide by the population size. This means that the probabilty of an infection happening has a rate of $\lambda_i= \beta \frac{S_i I_i}{S_i + I_i}$ which translates into a probability of $p_i = \exp\{- \lambda_i * \triangle d \}$[^4].
+
+```{python}
+# load packages 
+import numpy as np
+import pandas as pd 
+
+import matplotlib.pyplot as plt
+import seaborn as sns 
+
+sns.set()
+```
+```{python}
+# initial values
+time_delta = 1.                 # 1 day 
+initial_pop = [99.,1.]          # population vector 
+parameters0 = 0.01              # daily transmission parameter 
+```
+With the constants and initial conditions set, its time to move to the main bit of the code which performs the simulation. The function below called `SI_iteration` takes 3 parameter values: 
+1. `parameters` - this is a vector of model parameters. For now, this is a 1D vector holding the value for $\beta$. 
+2. `state` - this is a 2D vector containing the counts for each of the states.
+3. `time_delta` - the size (in days) of the discrete time step 
+```{python}
+def SI_iteration(parameters, state, time_delta):
+  beta = parameters
+  num_susceptibles, num_infected = state
+  
+  # Step 1: compute transition rates 
+  SI_rate = beta*(num_susceptibles * num_infected)/(num_susceptibles + num_infected) # <1>
+
+  # Step 2: convert event rates to probabilities 
+  i_rate = 1 - np.exp(- SI_rate * time_delta) # <2>
+
+  # Step 3: simulate number of new infections 
+  num_new_infections = np.random.binomial(num_susceptibles, i_rate) # <3>
+
+  # Step 4; state update
+  return [num_susceptibles - num_new_infections, num_infected + num_new_infections]
+```
+1. Compute the transition rate
+2. Turn the transition rate into a probability of new infections 
+3. Sample the number of new infections 
+
+Now for using our new function. Taking the initial values for each of the function arguments and plugging them in, we can see that the outcome of a single iteration in our epidemic. 
+```{python}
+# single iteration/forward step
+np.random.seed(20240701)                                  # <1>
+new_state = SI_iteration(parameters0, initial_pop, time_delta)
+
+print(f'New state: {new_state}')
+```
+1. Set the seed for reproducible value. 
+
+### Simulate a path
+We can extend the single iteration to sample a full path of the epidemic by calling our function over and over again while changing the state. This is not the most efficient way of performing a simulation but it is easy to understand. I will write another tutorial about doing this efficiently later on... promise. 
+```{python}
+# simulate full path
+def simulate(initial_state, num_steps):
+    # counters
+    ii = 0
+    S = np.zeros(num_steps)
+    I = np.zeros(num_steps)
+
+    # unpack the state
+    S[0], I[0] = initial_state
+    state = initial_state
+
+    while ii < num_steps:
+        state = SI_iteration(parameters0, state, time_delta)
+
+        S[ii], I[ii] = state
+
+        ii += 1
+
+    return {'Time': np.cumsum(np.repeat(time_delta, num_steps)),
+            'Susceptible': S,
+            'Infected': I}
+```
+
+Lets plot the simulation! 
+```{python}
+sample_epi = simulate(initial_pop, 100)
+
+pd.DataFrame(sample_epi).head(10)
+```
+
+```{python}
+#| label: fig-plots
+#| fig-cap: |
+#|   Full path of an epidemic. Simulation is done by calling 
+#|   the single iteration function repeatedly
+plt.figure(figsize=(12, 7))
+
+S_line = plt.plot("Time","Susceptible", data=sample_epi, color="b", linewidth=2)
+I_line = plt.plot("Time","Infected", data=sample_epi, color="r", linewidth=2)
+
+plt.xlabel("Days",fontweight="bold")
+plt.ylabel("Count",fontweight="bold")
+
+legend = plt.legend(title="Population",loc=5,bbox_to_anchor=(1.2,0.5))
+frame = legend.get_frame()
+frame.set_facecolor("white")
+frame.set_linewidth(0)
+
+# Add labels and title
+plt.xlabel('Days', fontweight="bold")  # Add x-axis label with font styling
+plt.ylabel('Count', fontweight="bold")  # Add y-axis label with font styling
+plt.title('Singe path simulation', fontsize=16)  # Add plot title with font size
+```
+
+### Conclusion
+Epidemic models are cool! 
+
+
+[^1]: [Resource here](https://deepblue.lib.umich.edu/bitstream/handle/2027.42/26512/0000050.pdf?sequence=1&isAllowed=y&fbclid=IwAR38zIDg_-vvXCMWHDoy-6rLXAluIa5ggiCmsalzh1IUBFaVxACS6KF3Cms)
+[^2]: I usually work with continuous time models which pose their own challenges. More on this will come in later posts
+[^3]: An epidemic unit can be anything that we can classify as susceptible or infected. These models are used for humans and animals so its easier to generalize the concept of an epidemic unit. The units can even be aggregated to represent households or farms. It gives us a more flexibility to adapt the scope of the model. 
+[^4]: Future post on the interpretable mathematics of epidemic models

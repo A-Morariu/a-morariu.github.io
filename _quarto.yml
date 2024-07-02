@@ -4,6 +4,7 @@ project:
 
 website:
   title: "Alin Morariu"
+  site-url: https://a-morariu.github.io
   favicon: a-solid.svg
   navbar:
     background: dark
@@ -32,6 +33,8 @@ format:
       light: [lux, styles.scss]
       dark: [slate, styles.scss]
     toc: true
+    mermaid: 
+      theme: neutral
 
 
 
