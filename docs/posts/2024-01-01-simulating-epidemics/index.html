@@ -308,7 +308,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="python-implementation">Python implementation</h2>
 <p>For this tutorial, I am going to try to use as few packages as possible so I’m going to restrict myself to <em>only</em> <code>numpy</code> and <code>pandas</code>. The rest of the code will be base Python.</p>
 <p>So what do we have so far? We know we’re going to be working with the Reed-Frost model which is a 2 state compartmental model. This is the class of the model and <em>not</em> a specific model. For that we need to add more structure. We need to know the size of population the disease is spreading through, the duration of each step in which events are happening (recall this is a discrete time model), and the last is going to be the transition rate or epidemic dynamics (how the disease is transmitted). The assumptions are as follows: 1. 100 epidemic units<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> with 99 susceptibles and 1 infected units. This is represented as a vector <span class="math inline">\([S_0, I_0] = [99,1]\)</span> (the subscript <span class="math inline">\(i\)</span> is the time period). 2. Time period is going to be daily so we set the time delta <span class="math inline">\(\triangle d = 1\)</span>. 3. Epidemic dynamics will be a density based transmission where we ‘count’ the number of pairwise interactions between infectious units and susceptibles and divide by the population size. This means that the probabilty of an infection happening has a rate of <span class="math inline">\(\lambda_i= \beta \frac{S_i I_i}{S_i + I_i}\)</span> which translates into a probability of <span class="math inline">\(p_i = \exp\{- \lambda_i * \triangle d \}\)</span><a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>.</p>
-<div id="3eb87f7c" class="cell" data-execution_count="1">
+<div id="040a523d" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load packages </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
@@ -318,14 +318,14 @@ window.Quarto = {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sns.<span class="bu">set</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="087f2d91" class="cell" data-execution_count="2">
+<div id="a1e25720" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initial values</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>time_delta <span class="op">=</span> <span class="fl">1.</span>                 <span class="co"># 1 day </span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>initial_pop <span class="op">=</span> [<span class="fl">99.</span>,<span class="fl">1.</span>]          <span class="co"># population vector </span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>parameters0 <span class="op">=</span> <span class="fl">0.01</span>              <span class="co"># daily transmission parameter </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>With the constants and initial conditions set, its time to move to the main bit of the code which performs the simulation. The function below called <code>SI_iteration</code> takes 3 parameter values: 1. <code>parameters</code> - this is a vector of model parameters. For now, this is a 1D vector holding the value for <span class="math inline">\(\beta\)</span>. 2. <code>state</code> - this is a 2D vector containing the counts for each of the states. 3. <code>time_delta</code> - the size (in days) of the discrete time step</p>
-<div id="4cd1a5f8" class="cell" data-execution_count="3">
+<div id="a7068db3" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="annotated-cell-3"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-3-1"><a href="#annotated-cell-3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SI_iteration(parameters, state, time_delta):</span>
 <span id="annotated-cell-3-2"><a href="#annotated-cell-3-2" aria-hidden="true" tabindex="-1"></a>  beta <span class="op">=</span> parameters</span>
 <span id="annotated-cell-3-3"><a href="#annotated-cell-3-3" aria-hidden="true" tabindex="-1"></a>  num_susceptibles, num_infected <span class="op">=</span> state</span>
@@ -359,7 +359,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Now for using our new function. Taking the initial values for each of the function arguments and plugging them in, we can see that the outcome of a single iteration in our epidemic.</p>
-<div id="c4135ea2" class="cell" data-execution_count="4">
+<div id="90706d60" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="annotated-cell-4"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-4-1"><a href="#annotated-cell-4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># single iteration/forward step</span></span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="1">1</button><span id="annotated-cell-4-2" class="code-annotation-target"><a href="#annotated-cell-4-2" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">20240701</span>)</span>
 <span id="annotated-cell-4-3"><a href="#annotated-cell-4-3" aria-hidden="true" tabindex="-1"></a>new_state <span class="op">=</span> SI_iteration(parameters0, initial_pop, time_delta)</span>
@@ -380,7 +380,7 @@ window.Quarto = {
 <section id="simulate-a-path" class="level3">
 <h3 class="anchored" data-anchor-id="simulate-a-path">Simulate a path</h3>
 <p>We can extend the single iteration to sample a full path of the epidemic by calling our function over and over again while changing the state. This is not the most efficient way of performing a simulation but it is easy to understand. I will write another tutorial about doing this efficiently later on… promise.</p>
-<div id="9e9afac4" class="cell" data-execution_count="5">
+<div id="6718b8d7" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate full path</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate(initial_state, num_steps):</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># counters</span></span>
@@ -404,11 +404,11 @@ window.Quarto = {
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Infected'</span>: I}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Lets plot the simulation!</p>
-<div id="cb357883" class="cell" data-execution_count="6">
+<div id="129d6a52" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sample_epi <span class="op">=</span> simulate(initial_pop, <span class="dv">100</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(sample_epi).head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="27">
 <div>
 
 
@@ -488,7 +488,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="7">
+<div id="cell-simulated_path" class="cell" width="80%" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">7</span>))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>S_line <span class="op">=</span> plt.plot(<span class="st">"Time"</span>,<span class="st">"Susceptible"</span>, data<span class="op">=</span>sample_epi, color<span class="op">=</span><span class="st">"b"</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
@@ -505,36 +505,16 @@ window.Quarto = {
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Add labels and title</span></span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Days'</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)  <span class="co"># Add x-axis label with font styling</span></span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Count'</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)  <span class="co"># Add y-axis label with font styling</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Singe path simulation'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)  <span class="co"># Add plot title with font size</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="fig-plots" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="7">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-plots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div id="fig-plots-1" class="cell-output cell-output-display quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="7">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-plots-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<pre id="fig-plots-1" class="cell-output cell-output-display" data-execution_count="7"><code>Text(0.5, 1.0, 'Singe path simulation')</code></pre>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-plots-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(a) Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly
-</figcaption>
-</figure>
-</div>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Single path simulation'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)  <span class="co"># Add plot title with font size</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-plots-2" class="quarto-float quarto-figure quarto-figure-center anchored" height="607" width="1140">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-plots-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-plots-output-2.png" class="lightbox" data-gallery="fig-plots" title="Figure&nbsp;1&nbsp;(b): "><img src="index_files/figure-html/fig-plots-output-2.png" id="fig-plots-2" data-ref-parent="fig-plots" width="1140" height="607" class="figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-plots-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-</figcaption>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="index_files/figure-html/simulated_path-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly"><img src="index_files/figure-html/simulated_path-output-1.png" width="1140" height="607" alt="Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly" class="figure-img"></a></p>
+<figcaption>Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
-</figcaption>
-</figure>
 </div>
 </div>
 </section>
@@ -1173,7 +1153,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","descPosition":"bottom","loop":false,"openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","closeEffect":"zoom","loop":false,"openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

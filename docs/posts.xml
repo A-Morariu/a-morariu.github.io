@@ -56,7 +56,7 @@
 <h2 class="anchored" data-anchor-id="python-implementation">Python implementation</h2>
 <p>For this tutorial, I am going to try to use as few packages as possible so I’m going to restrict myself to <em>only</em> <code>numpy</code> and <code>pandas</code>. The rest of the code will be base Python.</p>
 <p>So what do we have so far? We know we’re going to be working with the Reed-Frost model which is a 2 state compartmental model. This is the class of the model and <em>not</em> a specific model. For that we need to add more structure. We need to know the size of population the disease is spreading through, the duration of each step in which events are happening (recall this is a discrete time model), and the last is going to be the transition rate or epidemic dynamics (how the disease is transmitted). The assumptions are as follows: 1. 100 epidemic units<sup>3</sup> with 99 susceptibles and 1 infected units. This is represented as a vector <img src="https://latex.codecogs.com/png.latex?%5BS_0,%20I_0%5D%20=%20%5B99,1%5D"> (the subscript <img src="https://latex.codecogs.com/png.latex?i"> is the time period). 2. Time period is going to be daily so we set the time delta <img src="https://latex.codecogs.com/png.latex?%5Ctriangle%20d%20=%201">. 3. Epidemic dynamics will be a density based transmission where we ‘count’ the number of pairwise interactions between infectious units and susceptibles and divide by the population size. This means that the probabilty of an infection happening has a rate of <img src="https://latex.codecogs.com/png.latex?%5Clambda_i=%20%5Cbeta%20%5Cfrac%7BS_i%20I_i%7D%7BS_i%20+%20I_i%7D"> which translates into a probability of <img src="https://latex.codecogs.com/png.latex?p_i%20=%20%5Cexp%5C%7B-%20%5Clambda_i%20*%20%5Ctriangle%20d%20%5C%7D"><sup>4</sup>.</p>
-<div id="3eb87f7c" class="cell" data-execution_count="1">
+<div id="040a523d" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># load packages </span></span>
@@ -86,7 +86,7 @@ font-style: inherit;">as</span> sns </span>
 background-color: null;
 font-style: inherit;">set</span>()</span></code></pre></div>
 </div>
-<div id="087f2d91" class="cell" data-execution_count="2">
+<div id="a1e25720" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># initial values</span></span>
@@ -115,7 +115,7 @@ background-color: null;
 font-style: inherit;"># daily transmission parameter </span></span></code></pre></div>
 </div>
 <p>With the constants and initial conditions set, its time to move to the main bit of the code which performs the simulation. The function below called <code>SI_iteration</code> takes 3 parameter values: 1. <code>parameters</code> - this is a vector of model parameters. For now, this is a 1D vector holding the value for <img src="https://latex.codecogs.com/png.latex?%5Cbeta">. 2. <code>state</code> - this is a 2D vector containing the counts for each of the states. 3. <code>time_delta</code> - the size (in days) of the discrete time step</p>
-<div id="4cd1a5f8" class="cell" data-execution_count="3">
+<div id="a7068db3" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="annotated-cell-3" style="background: #f1f3f5;"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -193,7 +193,7 @@ font-style: inherit;">+</span> num_new_infections]</span><div class="code-annota
 </div>
 </div>
 <p>Now for using our new function. Taking the initial values for each of the function arguments and plugging them in, we can see that the outcome of a single iteration in our epidemic.</p>
-<div id="c4135ea2" class="cell" data-execution_count="4">
+<div id="90706d60" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="annotated-cell-4" style="background: #f1f3f5;"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-4-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># single iteration/forward step</span></span>
@@ -230,7 +230,7 @@ font-style: inherit;">'</span>)</span><div class="code-annotation-gutter-bg"></d
 <section id="simulate-a-path" class="level3">
 <h3 class="anchored" data-anchor-id="simulate-a-path">Simulate a path</h3>
 <p>We can extend the single iteration to sample a full path of the epidemic by calling our function over and over again while changing the state. This is not the most efficient way of performing a simulation but it is easy to understand. I will write another tutorial about doing this efficiently later on… promise.</p>
-<div id="9e9afac4" class="cell" data-execution_count="5">
+<div id="6718b8d7" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># simulate full path</span></span>
@@ -301,7 +301,7 @@ background-color: null;
 font-style: inherit;">'Infected'</span>: I}</span></code></pre></div>
 </div>
 <p>Lets plot the simulation!</p>
-<div id="cb357883" class="cell" data-execution_count="6">
+<div id="129d6a52" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">sample_epi <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> simulate(initial_pop, <span class="dv" style="color: #AD0000;
@@ -311,7 +311,7 @@ font-style: inherit;">100</span>)</span>
 <span id="cb5-3">pd.DataFrame(sample_epi).head(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">10</span>)</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="27">
 <div>
 
 
@@ -391,7 +391,7 @@ font-style: inherit;">10</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="7">
+<div id="cell-simulated_path" class="cell" width="80%" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
@@ -500,42 +500,22 @@ background-color: null;
 font-style: inherit;"># Add y-axis label with font styling</span></span>
 <span id="cb6-17">plt.title(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'Singe path simulation'</span>, fontsize<span class="op" style="color: #5E5E5E;
+font-style: inherit;">'Single path simulation'</span>, fontsize<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">16</span>)  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Add plot title with font size</span></span></code></pre></div>
-<div id="fig-plots" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="7">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-plots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div id="fig-plots-1" class="cell-output cell-output-display quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="7">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-plots-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<pre id="fig-plots-1" class="cell-output cell-output-display" data-execution_count="7"><code>Text(0.5, 1.0, 'Singe path simulation')</code></pre>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-plots-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(a) Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly
-</figcaption>
-</figure>
-</div>
+font-style: inherit;"># Add plot title with font size</span></span>
+<span id="cb6-18"></span>
+<span id="cb6-19">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-plots-2" class="quarto-float quarto-figure quarto-figure-center anchored" height="607" width="1140">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-plots-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-plots-output-2.png" class="lightbox" data-gallery="fig-plots" title="Figure&nbsp;1&nbsp;(b): "><img src="https://a-morariu.github.io/posts/2024-01-01-simulating-epidemics/index_files/figure-html/fig-plots-output-2.png" id="fig-plots-2" data-ref-parent="fig-plots" width="1140" height="607" class="figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-plots-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-</figcaption>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="index_files/figure-html/simulated_path-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly"><img src="https://a-morariu.github.io/posts/2024-01-01-simulating-epidemics/index_files/figure-html/simulated_path-output-1.png" width="1140" height="607" alt="Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly" class="figure-img"></a></p>
+<figcaption>Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-plots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
-</figcaption>
-</figure>
 </div>
 </div>
 </section>

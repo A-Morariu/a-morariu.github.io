@@ -132,7 +132,8 @@ pd.DataFrame(sample_epi).head(10)
 ```
 
 ```{python}
-#| label: fig-plots
+#| label: simulated_path
+#| width: 80%
 #| fig-cap: |
 #|   Full path of an epidemic. Simulation is done by calling 
 #|   the single iteration function repeatedly
@@ -152,8 +153,11 @@ frame.set_linewidth(0)
 # Add labels and title
 plt.xlabel('Days', fontweight="bold")  # Add x-axis label with font styling
 plt.ylabel('Count', fontweight="bold")  # Add y-axis label with font styling
-plt.title('Singe path simulation', fontsize=16)  # Add plot title with font size
+plt.title('Single path simulation', fontsize=16)  # Add plot title with font size
+
+plt.show()
 ```
+
 
 ### Conclusion
 Epidemic models are cool! 
