@@ -6,9 +6,9 @@ author:
     #orcid: 0000-0002-5300-3075
     affiliation: Lancaster University
     affiliation-url: https://www.lancaster.ac.uk/maths/
-date: 01-07-2024
+date: 07-01-2024          # MM-DD-YYYY
 categories: [epidemics, simulation] # self-defined categories
-#image: preview-image.png
+image: DSC_6355.jpg
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 code-annotations: hover
 lightbox: auto
@@ -176,6 +176,10 @@ In this tutorial, I showed one way to implement a chain binomial epidemic model.
 
 ### Next steps
 As far as using epidemic models in the real world goes, simulation is only one half of the coin. The other side has to do with fitting these models. If the problem was reversed and we had observed an epidemic process, recorded the data and created a data set that looks something like @epi_dataset we could then try to find the value of `parameters` which generated that data. This can be done in a variety of ways such as maximum likelihood estimation or Bayesian inference. If this type of problem interests you, I'd highly recommend checking out the [IDDinf 2024](https://gem-epidemics.gitlab.io/iddinf/) inference course. This is a course I will be co-teaching with some incredible people in September 2024 and will go over everything you need to know to fit epidemic models with Bayesian inference. 
+
+### Thanks for reading
+In my spare time, I like to take photos so I'm going to add one photo I like at the end of each post as a thank you :) 
+![Ile du Frioul, Marseille, France, 2024](DSC_6355.jpg){.lightbox}
 
 [^1]: [Resource here](https://deepblue.lib.umich.edu/bitstream/handle/2027.42/26512/0000050.pdf?sequence=1&isAllowed=y&fbclid=IwAR38zIDg_-vvXCMWHDoy-6rLXAluIa5ggiCmsalzh1IUBFaVxACS6KF3Cms)
 [^2]: I usually work with continuous time models which pose their own challenges. More on this will come in later posts

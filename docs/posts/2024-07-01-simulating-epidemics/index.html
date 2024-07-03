@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Alin Morariu">
-<meta name="dcterms.date" content="2024-01-07">
+<meta name="dcterms.date" content="2024-07-01">
 <meta name="description" content="We take a look at the popular (and simple) chain-binomial model for simulating an epidemic">
 
 <title>Simulating an epidemic – Alin Morariu</title>
@@ -237,7 +237,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">January 7, 2024</p>
+        <p class="date">July 1, 2024</p>
       </div>
     </div>
     
@@ -263,6 +263,7 @@ window.Quarto = {
   <li><a href="#simulate-a-path" id="toc-simulate-a-path" class="nav-link" data-scroll-target="#simulate-a-path">Simulate a path</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
+  <li><a href="#thanks-for-reading" id="toc-thanks-for-reading" class="nav-link" data-scroll-target="#thanks-for-reading">Thanks for reading</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -308,7 +309,7 @@ window.Quarto = {
 <section id="python-implementation" class="level2">
 <h2 class="anchored" data-anchor-id="python-implementation">Python implementation</h2>
 <p>For this tutorial, I am going to try to use as few packages as possible so I’m going to restrict myself to <em>only</em> <code>numpy</code> and <code>pandas</code>. The rest of the code will be base Python.</p>
-<div id="63ed508e" class="cell" data-execution_count="1">
+<div id="57f3850a" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load packages </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
@@ -338,7 +339,7 @@ Important
 <li>Time period is going to be daily so we set the time delta <span class="math inline">\(\triangle d = 1\)</span>.</li>
 <li>Epidemic dynamics will be a density based transmission where we ‘count’ the number of pairwise interactions between infectious units and susceptibles and divide by the population size. This means that the probabilty of an infection happening has a rate of <span class="math inline">\(\lambda_i= \beta \frac{S_i I_i}{S_i + I_i}\)</span> which translates into a probability of <span class="math inline">\(p_i = \exp\{- \lambda_i * \triangle d \}\)</span><a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>.</li>
 </ol>
-<div id="2f34930e" class="cell" data-execution_count="2">
+<div id="3744fa8c" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initial values</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>time_delta <span class="op">=</span> <span class="fl">1.</span>                 <span class="co"># 1 day </span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>initial_pop <span class="op">=</span> [<span class="fl">99.</span>,<span class="fl">1.</span>]          <span class="co"># population vector </span></span>
@@ -359,7 +360,7 @@ Tip
 </div>
 </div>
 <p>The function below called <code>SI_iteration</code> takes 3 parameter values: 1. <code>parameters</code> - this is a vector of model parameters. For now, this is a 1D vector holding the value for <span class="math inline">\(\beta\)</span>. 2. <code>state</code> - this is a 2D vector containing the counts for each of the states. 3. <code>time_delta</code> - the size (in days) of the discrete time step</p>
-<div id="4039113e" class="cell" data-execution_count="3">
+<div id="80150d9d" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="annotated-cell-3"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-3-1"><a href="#annotated-cell-3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SI_iteration(parameters, state, time_delta):</span>
 <span id="annotated-cell-3-2"><a href="#annotated-cell-3-2" aria-hidden="true" tabindex="-1"></a>  beta <span class="op">=</span> parameters</span>
 <span id="annotated-cell-3-3"><a href="#annotated-cell-3-3" aria-hidden="true" tabindex="-1"></a>  num_susceptibles, num_infected <span class="op">=</span> state</span>
@@ -393,7 +394,7 @@ Tip
 </div>
 </div>
 <p>I’m going to ignore the mathematics of Step 2 in chunk above <em>for now</em> since that will be its own post down the line. The gory details can be found in the paper I mentioned earlier for those curious. Now for using our new function! Taking the initial values for each of the arguments and plugging them in, we can get the outcome of a single iteration or single step of our epidemic process. This is not a complete path!</p>
-<div id="26d3dda1" class="cell" data-execution_count="4">
+<div id="7283e46d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="annotated-cell-4"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-4-1"><a href="#annotated-cell-4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># single iteration/forward step</span></span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="1">1</button><span id="annotated-cell-4-2" class="code-annotation-target"><a href="#annotated-cell-4-2" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">20240701</span>)</span>
 <span id="annotated-cell-4-3"><a href="#annotated-cell-4-3" aria-hidden="true" tabindex="-1"></a>new_state <span class="op">=</span> SI_iteration(parameters0, initial_pop, time_delta)</span>
@@ -414,7 +415,7 @@ Tip
 <section id="simulate-a-path" class="level3">
 <h3 class="anchored" data-anchor-id="simulate-a-path">Simulate a path</h3>
 <p>We can extend the single iteration to sample a full path of the epidemic by calling our function over and over again. This is not the most efficient way of performing a simulation but it is easy to understand so it’ll do for now.</p>
-<div id="6716592d" class="cell" data-execution_count="5">
+<div id="624b87ea" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate full path</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate(initial_state, num_steps):</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># counters</span></span>
@@ -443,7 +444,7 @@ Tip
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sample_epi <span class="op">=</span> simulate(initial_pop, <span class="dv">100</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(sample_epi).head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="epi_dataset" class="cell-output cell-output-display" data-execution_count="398">
+<div id="epi_dataset" class="cell-output cell-output-display" data-execution_count="6">
 <div>
 
 
@@ -561,6 +562,10 @@ Tip
 <section id="next-steps" class="level3">
 <h3 class="anchored" data-anchor-id="next-steps">Next steps</h3>
 <p>As far as using epidemic models in the real world goes, simulation is only one half of the coin. The other side has to do with fitting these models. If the problem was reversed and we had observed an epidemic process, recorded the data and created a data set that looks something like <span class="citation" data-cites="epi_dataset">@epi_dataset</span> we could then try to find the value of <code>parameters</code> which generated that data. This can be done in a variety of ways such as maximum likelihood estimation or Bayesian inference. If this type of problem interests you, I’d highly recommend checking out the <a href="https://gem-epidemics.gitlab.io/iddinf/">IDDinf 2024</a> inference course. This is a course I will be co-teaching with some incredible people in September 2024 and will go over everything you need to know to fit epidemic models with Bayesian inference.</p>
+</section>
+<section id="thanks-for-reading" class="level3">
+<h3 class="anchored" data-anchor-id="thanks-for-reading">Thanks for reading</h3>
+<p>In my spare time, I like to take photos so I’m going to add one photo I like at the end of each post as a thank you :) <a href="DSC_6355.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Ile du Frioul, Marseille, France, 2024"><img src="DSC_6355.jpg" class="img-fluid" alt="Ile du Frioul, Marseille, France, 2024"></a></p>
 
 
 </section>
@@ -1193,7 +1198,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","closeEffect":"zoom","selector":".lightbox","openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom","loop":false});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

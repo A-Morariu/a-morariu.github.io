@@ -2,14 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://a-morariu.github.io/posts.html</loc>
-    <lastmod>2024-07-01T13:06:25.795Z</lastmod>
+    <lastmod>2024-07-03T18:12:12.057Z</lastmod>
   </url>
   <url>
-    <loc>https://a-morariu.github.io/posts/2024-01-01-simulating-epidemics/index.html</loc>
-    <lastmod>2024-07-02T17:43:34.315Z</lastmod>
+    <loc>https://a-morariu.github.io/index.html</loc>
+    <lastmod>2024-07-01T16:19:38.165Z</lastmod>
   </url>
   <url>
     <loc>https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/index.html</loc>
-    <lastmod>2024-07-03T17:47:07.344Z</lastmod>
+    <lastmod>2024-07-03T18:20:56.786Z</lastmod>
+  </url>
+  <url>
+    <loc>https://a-morariu.github.io/about.html</loc>
+    <lastmod>2024-07-01T11:44:25.505Z</lastmod>
   </url>
 </urlset>

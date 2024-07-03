@@ -10,7 +10,7 @@
 <atom:link href="https://a-morariu.github.io/posts.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.47</generator>
-<lastBuildDate>Sun, 07 Jan 2024 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 30 Jun 2024 23:00:00 GMT</lastBuildDate>
 <item>
   <title>Simulating an epidemic</title>
   <dc:creator>Alin Morariu</dc:creator>
@@ -55,7 +55,7 @@
 <section id="python-implementation" class="level2">
 <h2 class="anchored" data-anchor-id="python-implementation">Python implementation</h2>
 <p>For this tutorial, I am going to try to use as few packages as possible so I’m going to restrict myself to <em>only</em> <code>numpy</code> and <code>pandas</code>. The rest of the code will be base Python.</p>
-<div id="63ed508e" class="cell" data-execution_count="1">
+<div id="57f3850a" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># load packages </span></span>
@@ -105,7 +105,7 @@ Important
 <li>Time period is going to be daily so we set the time delta <img src="https://latex.codecogs.com/png.latex?%5Ctriangle%20d%20=%201">.</li>
 <li>Epidemic dynamics will be a density based transmission where we ‘count’ the number of pairwise interactions between infectious units and susceptibles and divide by the population size. This means that the probabilty of an infection happening has a rate of <img src="https://latex.codecogs.com/png.latex?%5Clambda_i=%20%5Cbeta%20%5Cfrac%7BS_i%20I_i%7D%7BS_i%20+%20I_i%7D"> which translates into a probability of <img src="https://latex.codecogs.com/png.latex?p_i%20=%20%5Cexp%5C%7B-%20%5Clambda_i%20*%20%5Ctriangle%20d%20%5C%7D"><sup>4</sup>.</li>
 </ol>
-<div id="2f34930e" class="cell" data-execution_count="2">
+<div id="3744fa8c" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># initial values</span></span>
@@ -148,7 +148,7 @@ Tip
 </div>
 </div>
 <p>The function below called <code>SI_iteration</code> takes 3 parameter values: 1. <code>parameters</code> - this is a vector of model parameters. For now, this is a 1D vector holding the value for <img src="https://latex.codecogs.com/png.latex?%5Cbeta">. 2. <code>state</code> - this is a 2D vector containing the counts for each of the states. 3. <code>time_delta</code> - the size (in days) of the discrete time step</p>
-<div id="4039113e" class="cell" data-execution_count="3">
+<div id="80150d9d" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="annotated-cell-3" style="background: #f1f3f5;"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -226,7 +226,7 @@ font-style: inherit;">+</span> num_new_infections]</span><div class="code-annota
 </div>
 </div>
 <p>I’m going to ignore the mathematics of Step 2 in chunk above <em>for now</em> since that will be its own post down the line. The gory details can be found in the paper I mentioned earlier for those curious. Now for using our new function! Taking the initial values for each of the arguments and plugging them in, we can get the outcome of a single iteration or single step of our epidemic process. This is not a complete path!</p>
-<div id="26d3dda1" class="cell" data-execution_count="4">
+<div id="7283e46d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="annotated-cell-4" style="background: #f1f3f5;"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-4-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># single iteration/forward step</span></span>
@@ -263,7 +263,7 @@ font-style: inherit;">'</span>)</span><div class="code-annotation-gutter-bg"></d
 <section id="simulate-a-path" class="level3">
 <h3 class="anchored" data-anchor-id="simulate-a-path">Simulate a path</h3>
 <p>We can extend the single iteration to sample a full path of the epidemic by calling our function over and over again. This is not the most efficient way of performing a simulation but it is easy to understand so it’ll do for now.</p>
-<div id="6716592d" class="cell" data-execution_count="5">
+<div id="624b87ea" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># simulate full path</span></span>
@@ -349,7 +349,7 @@ font-style: inherit;">100</span>)</span>
 <span id="cb5-3">pd.DataFrame(sample_epi).head(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">10</span>)</span></code></pre></div>
-<div id="epi_dataset" class="cell-output cell-output-display" data-execution_count="398">
+<div id="epi_dataset" class="cell-output cell-output-display" data-execution_count="6">
 <div>
 
 
@@ -565,6 +565,10 @@ font-style: inherit;"># Add plot title with font size</span></span>
 <section id="next-steps" class="level3">
 <h3 class="anchored" data-anchor-id="next-steps">Next steps</h3>
 <p>As far as using epidemic models in the real world goes, simulation is only one half of the coin. The other side has to do with fitting these models. If the problem was reversed and we had observed an epidemic process, recorded the data and created a data set that looks something like <span class="citation" data-cites="epi_dataset">@epi_dataset</span> we could then try to find the value of <code>parameters</code> which generated that data. This can be done in a variety of ways such as maximum likelihood estimation or Bayesian inference. If this type of problem interests you, I’d highly recommend checking out the <a href="https://gem-epidemics.gitlab.io/iddinf/">IDDinf 2024</a> inference course. This is a course I will be co-teaching with some incredible people in September 2024 and will go over everything you need to know to fit epidemic models with Bayesian inference.</p>
+</section>
+<section id="thanks-for-reading" class="level3">
+<h3 class="anchored" data-anchor-id="thanks-for-reading">Thanks for reading</h3>
+<p>In my spare time, I like to take photos so I’m going to add one photo I like at the end of each post as a thank you :) <a href="DSC_6355.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Ile du Frioul, Marseille, France, 2024"><img src="https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/DSC_6355.jpg" class="img-fluid" alt="Ile du Frioul, Marseille, France, 2024"></a></p>
 
 
 </section>
@@ -583,7 +587,8 @@ font-style: inherit;"># Add plot title with font size</span></span>
   <category>epidemics</category>
   <category>simulation</category>
   <guid>https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/</guid>
-  <pubDate>Sun, 07 Jan 2024 00:00:00 GMT</pubDate>
+  <pubDate>Sun, 30 Jun 2024 23:00:00 GMT</pubDate>
+  <media:content url="https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/DSC_6355.jpg" medium="image" type="image/jpeg"/>
 </item>
 </channel>
 </rss>
