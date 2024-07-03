@@ -10,22 +10,22 @@
 <atom:link href="https://a-morariu.github.io/posts.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.47</generator>
-<lastBuildDate>Mon, 01 Jan 2024 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 07 Jan 2024 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Simulating an epidemic</title>
   <dc:creator>Alin Morariu</dc:creator>
-  <link>https://a-morariu.github.io/posts/2024-01-01-simulating-epidemics/</link>
+  <link>https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/</link>
   <description><![CDATA[ 
 
 
 
 
 
-<p>When I started my PhD two years ago, I had never looked at an epidemic model outside of an elementry differential equations course. Fast forward two years and one Covid-19 later, the bulk of my work is centred around epidemic models. More specifically, stochastic epidemic models. Differential equation models are simple and easy to use but are often too rigid since they don’t reflect the randomness we see in the real world when it comes to epidemic models.</p>
-<p>This post is going to be a tutorial for implementing/coding a chain binomial epidemic model in Python. This model is sometimes referred to as the Reed-Frost model and was initially used to model epidemic spread in the late 1920s (more details<sup>1</sup>).</p>
+<p>When I started my PhD two years ago, I had never looked at an epidemic model outside of an elementry differential equations course. Fast forward two years, and one Covid-19 later, the bulk of my work is centred around epidemic models. More specifically, <em>stochastic</em> epidemic models. Differential equation models are simple and easy to use but are often too rigid since they don’t reflect the randomness we see in the real world when it comes to the spread of disease.</p>
+<p>This post is going to be a tutorial that I wish I had at the start of my epidemic modelling journey. The aim is to implement/code a chain binomial epidemic model in Python. This model is sometimes referred to as the Reed-Frost model and was initially used to model epidemic spread in the late 1920s (more details<sup>1</sup>). It is one of the simplest epidemic models as it only focuses on the infection process so take this as the base case. Future posts will dive deeper into the mathematics and how to expand on this model to make it more realistic.</p>
 <section id="reed-frost-model" class="level2">
 <h2 class="anchored" data-anchor-id="reed-frost-model">Reed-Frost model</h2>
-<p>The Reed-Frost model is a simple and intuitive mathematical model used to understand how infectious diseases spread through a population. This model helps us predict the number of people who will become infected over time, given some initial conditions.</p>
+<p>The Reed-Frost model helps us predict the number of people who will become infected over time, given some initial conditions.</p>
 <section id="intuition" class="level3">
 <h3 class="anchored" data-anchor-id="intuition">Intuition</h3>
 <p>Imagine a group of people where some are initially infected with a disease, and others are susceptible but not yet infected. The Reed-Frost model works by dividing time into discrete steps<sup>2</sup>, such as days or weeks. At each time step, each susceptible person has a chance of getting infected based on their contact with infectious individuals.</p>
@@ -55,8 +55,7 @@
 <section id="python-implementation" class="level2">
 <h2 class="anchored" data-anchor-id="python-implementation">Python implementation</h2>
 <p>For this tutorial, I am going to try to use as few packages as possible so I’m going to restrict myself to <em>only</em> <code>numpy</code> and <code>pandas</code>. The rest of the code will be base Python.</p>
-<p>So what do we have so far? We know we’re going to be working with the Reed-Frost model which is a 2 state compartmental model. This is the class of the model and <em>not</em> a specific model. For that we need to add more structure. We need to know the size of population the disease is spreading through, the duration of each step in which events are happening (recall this is a discrete time model), and the last is going to be the transition rate or epidemic dynamics (how the disease is transmitted). The assumptions are as follows: 1. 100 epidemic units<sup>3</sup> with 99 susceptibles and 1 infected units. This is represented as a vector <img src="https://latex.codecogs.com/png.latex?%5BS_0,%20I_0%5D%20=%20%5B99,1%5D"> (the subscript <img src="https://latex.codecogs.com/png.latex?i"> is the time period). 2. Time period is going to be daily so we set the time delta <img src="https://latex.codecogs.com/png.latex?%5Ctriangle%20d%20=%201">. 3. Epidemic dynamics will be a density based transmission where we ‘count’ the number of pairwise interactions between infectious units and susceptibles and divide by the population size. This means that the probabilty of an infection happening has a rate of <img src="https://latex.codecogs.com/png.latex?%5Clambda_i=%20%5Cbeta%20%5Cfrac%7BS_i%20I_i%7D%7BS_i%20+%20I_i%7D"> which translates into a probability of <img src="https://latex.codecogs.com/png.latex?p_i%20=%20%5Cexp%5C%7B-%20%5Clambda_i%20*%20%5Ctriangle%20d%20%5C%7D"><sup>4</sup>.</p>
-<div id="040a523d" class="cell" data-execution_count="1">
+<div id="63ed508e" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># load packages </span></span>
@@ -86,7 +85,27 @@ font-style: inherit;">as</span> sns </span>
 background-color: null;
 font-style: inherit;">set</span>()</span></code></pre></div>
 </div>
-<div id="a1e25720" class="cell" data-execution_count="2">
+<p>Let’s take stock of what we know at this point. The Reed-Frost model which is a 2-state compartmental model.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is a class of models and <em>not</em> a specific model.</p>
+</div>
+</div>
+<p>To specify a model we need to add more structure. We want to know the size of population the disease is spreading through, the duration of each step in which events are happening (recall this is a discrete time model), and the last is going to be the transition rate or epidemic dynamics (how the disease is transmitted). The assumptions are as follows:</p>
+<ol type="1">
+<li>100 epidemic units<sup>3</sup> with 99 susceptibles and 1 infected units. This is represented as a vector <img src="https://latex.codecogs.com/png.latex?%5BS_0,%20I_0%5D%20=%20%5B99,1%5D"> (the subscript <img src="https://latex.codecogs.com/png.latex?i"> is the time period).</li>
+<li>Time period is going to be daily so we set the time delta <img src="https://latex.codecogs.com/png.latex?%5Ctriangle%20d%20=%201">.</li>
+<li>Epidemic dynamics will be a density based transmission where we ‘count’ the number of pairwise interactions between infectious units and susceptibles and divide by the population size. This means that the probabilty of an infection happening has a rate of <img src="https://latex.codecogs.com/png.latex?%5Clambda_i=%20%5Cbeta%20%5Cfrac%7BS_i%20I_i%7D%7BS_i%20+%20I_i%7D"> which translates into a probability of <img src="https://latex.codecogs.com/png.latex?p_i%20=%20%5Cexp%5C%7B-%20%5Clambda_i%20*%20%5Ctriangle%20d%20%5C%7D"><sup>4</sup>.</li>
+</ol>
+<div id="2f34930e" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># initial values</span></span>
@@ -114,8 +133,22 @@ font-style: inherit;">0.01</span>              <span class="co" style="color: #5
 background-color: null;
 font-style: inherit;"># daily transmission parameter </span></span></code></pre></div>
 </div>
-<p>With the constants and initial conditions set, its time to move to the main bit of the code which performs the simulation. The function below called <code>SI_iteration</code> takes 3 parameter values: 1. <code>parameters</code> - this is a vector of model parameters. For now, this is a 1D vector holding the value for <img src="https://latex.codecogs.com/png.latex?%5Cbeta">. 2. <code>state</code> - this is a 2D vector containing the counts for each of the states. 3. <code>time_delta</code> - the size (in days) of the discrete time step</p>
-<div id="a7068db3" class="cell" data-execution_count="3">
+<p>With the constants and initial conditions set, its time to move to the main bit of the code which performs the simulation.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I’ve been using the term implementing a model and this doesn’t really have a set definition. In this case, implementation is done when you can simulate a correct trajectory of the epidemic but in other settings it may mean fitting a model to data, validating, predicting, etc. The scope of an implementation changes with the nature of the problem and is context specific. Its all jargon here.</p>
+</div>
+</div>
+<p>The function below called <code>SI_iteration</code> takes 3 parameter values: 1. <code>parameters</code> - this is a vector of model parameters. For now, this is a 1D vector holding the value for <img src="https://latex.codecogs.com/png.latex?%5Cbeta">. 2. <code>state</code> - this is a 2D vector containing the counts for each of the states. 3. <code>time_delta</code> - the size (in days) of the discrete time step</p>
+<div id="4039113e" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="annotated-cell-3" style="background: #f1f3f5;"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -192,8 +225,8 @@ font-style: inherit;">+</span> num_new_infections]</span><div class="code-annota
 </dl>
 </div>
 </div>
-<p>Now for using our new function. Taking the initial values for each of the function arguments and plugging them in, we can see that the outcome of a single iteration in our epidemic.</p>
-<div id="90706d60" class="cell" data-execution_count="4">
+<p>I’m going to ignore the mathematics of Step 2 in chunk above <em>for now</em> since that will be its own post down the line. The gory details can be found in the paper I mentioned earlier for those curious. Now for using our new function! Taking the initial values for each of the arguments and plugging them in, we can get the outcome of a single iteration or single step of our epidemic process. This is not a complete path!</p>
+<div id="26d3dda1" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="annotated-cell-4" style="background: #f1f3f5;"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-4-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># single iteration/forward step</span></span>
@@ -229,8 +262,8 @@ font-style: inherit;">'</span>)</span><div class="code-annotation-gutter-bg"></d
 </div>
 <section id="simulate-a-path" class="level3">
 <h3 class="anchored" data-anchor-id="simulate-a-path">Simulate a path</h3>
-<p>We can extend the single iteration to sample a full path of the epidemic by calling our function over and over again while changing the state. This is not the most efficient way of performing a simulation but it is easy to understand. I will write another tutorial about doing this efficiently later on… promise.</p>
-<div id="6718b8d7" class="cell" data-execution_count="5">
+<p>We can extend the single iteration to sample a full path of the epidemic by calling our function over and over again. This is not the most efficient way of performing a simulation but it is easy to understand so it’ll do for now.</p>
+<div id="6716592d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># simulate full path</span></span>
@@ -273,35 +306,40 @@ font-weight: bold;
 font-style: inherit;">while</span> ii <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&lt;</span> num_steps:</span>
-<span id="cb4-13">        state <span class="op" style="color: #5E5E5E;
+<span id="cb4-13">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># single iteration to update the state</span></span>
+<span id="cb4-14">      state <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> SI_iteration(parameters0, state, time_delta)</span>
-<span id="cb4-14"></span>
-<span id="cb4-15">        S[ii], I[ii] <span class="op" style="color: #5E5E5E;
+<span id="cb4-15">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># record the outcome</span></span>
+<span id="cb4-16">      S[ii], I[ii] <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> state</span>
-<span id="cb4-16"></span>
-<span id="cb4-17">        ii <span class="op" style="color: #5E5E5E;
+<span id="cb4-17"></span>
+<span id="cb4-18">      ii <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span>
-<span id="cb4-18"></span>
-<span id="cb4-19">    <span class="cf" style="color: #003B4F;
+<span id="cb4-19"></span>
+<span id="cb4-20">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Time'</span>: np.cumsum(np.repeat(time_delta, num_steps)),</span>
-<span id="cb4-20">            <span class="st" style="color: #20794D;
+<span id="cb4-21">            <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Susceptible'</span>: S,</span>
-<span id="cb4-21">            <span class="st" style="color: #20794D;
+<span id="cb4-22">            <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Infected'</span>: I}</span></code></pre></div>
 </div>
-<p>Lets plot the simulation!</p>
-<div id="129d6a52" class="cell" data-execution_count="6">
+<p>And run a simulation of 100 steps (note that some of the steps might be non-events since every unit has progressed through the epidemic). There are nice ways of stopping simulations early by using a clever stop condition within the while loop.</p>
+<div id="cell-epi_dataset" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">sample_epi <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> simulate(initial_pop, <span class="dv" style="color: #AD0000;
@@ -311,7 +349,7 @@ font-style: inherit;">100</span>)</span>
 <span id="cb5-3">pd.DataFrame(sample_epi).head(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">10</span>)</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div id="epi_dataset" class="cell-output cell-output-display" data-execution_count="398">
 <div>
 
 
@@ -391,6 +429,7 @@ font-style: inherit;">10</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
+<p>Lets plot the simulation!</p>
 <div id="cell-simulated_path" class="cell" width="80%" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -512,7 +551,7 @@ font-style: inherit;"># Add plot title with font size</span></span>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="index_files/figure-html/simulated_path-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly"><img src="https://a-morariu.github.io/posts/2024-01-01-simulating-epidemics/index_files/figure-html/simulated_path-output-1.png" width="1140" height="607" alt="Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly" class="figure-img"></a></p>
+<p><a href="index_files/figure-html/simulated_path-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly"><img src="https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/index_files/figure-html/simulated_path-output-1.png" width="1140" height="607" alt="Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly" class="figure-img"></a></p>
 <figcaption>Full path of an epidemic. Simulation is done by calling the single iteration function repeatedly</figcaption>
 </figure>
 </div>
@@ -521,7 +560,11 @@ font-style: inherit;"># Add plot title with font size</span></span>
 </section>
 <section id="conclusion" class="level3">
 <h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
-<p>Epidemic models are cool!</p>
+<p>In this tutorial, I showed one way to implement a chain binomial epidemic model. This basic model is a great starting point for building more complex and realistic models. The function <code>SI_iteration</code> uses a simplified version of the <a href="https://en.wikipedia.org/wiki/Gillespie_algorithm">Gillespie algorithm</a> which is the standard algorithm for simulating stochastic trajectories for these types of systems. I’d also recommend checking out <a href="https://lewiscoleblog.com/gillespie-algorithm">this blog</a> post by Lewis Cole for an in depth look at the algorithm.</p>
+</section>
+<section id="next-steps" class="level3">
+<h3 class="anchored" data-anchor-id="next-steps">Next steps</h3>
+<p>As far as using epidemic models in the real world goes, simulation is only one half of the coin. The other side has to do with fitting these models. If the problem was reversed and we had observed an epidemic process, recorded the data and created a data set that looks something like <span class="citation" data-cites="epi_dataset">@epi_dataset</span> we could then try to find the value of <code>parameters</code> which generated that data. This can be done in a variety of ways such as maximum likelihood estimation or Bayesian inference. If this type of problem interests you, I’d highly recommend checking out the <a href="https://gem-epidemics.gitlab.io/iddinf/">IDDinf 2024</a> inference course. This is a course I will be co-teaching with some incredible people in September 2024 and will go over everything you need to know to fit epidemic models with Bayesian inference.</p>
 
 
 </section>
@@ -539,33 +582,8 @@ font-style: inherit;"># Add plot title with font size</span></span>
 </section></div> ]]></description>
   <category>epidemics</category>
   <category>simulation</category>
-  <guid>https://a-morariu.github.io/posts/2024-01-01-simulating-epidemics/</guid>
-  <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>blog post title</title>
-  <dc:creator>Alin Morariu</dc:creator>
-  <link>https://a-morariu.github.io/posts/2024-01-01-first-post/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<p>Sample post… <sup>1</sup></p>
-
-
-
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>Example footnote so later me remembers how to do it.↩︎</p></li>
-</ol>
-</section></div> ]]></description>
-  <category>other</category>
-  <guid>https://a-morariu.github.io/posts/2024-01-01-first-post/</guid>
-  <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>
+  <guid>https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/</guid>
+  <pubDate>Sun, 07 Jan 2024 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

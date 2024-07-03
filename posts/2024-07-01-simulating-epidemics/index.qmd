@@ -6,7 +6,7 @@ author:
     #orcid: 0000-0002-5300-3075
     affiliation: Lancaster University
     affiliation-url: https://www.lancaster.ac.uk/maths/
-date: 01-01-2024
+date: 01-07-2024
 categories: [epidemics, simulation] # self-defined categories
 #image: preview-image.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
@@ -14,12 +14,12 @@ code-annotations: hover
 lightbox: auto
 ---
 
-When I started my PhD two years ago, I had never looked at an epidemic model outside of an elementry differential equations course. Fast forward two years and one Covid-19 later, the bulk of my work is centred around epidemic models. More specifically, stochastic epidemic models. Differential equation models are simple and easy to use but are often too rigid since they don't reflect the randomness we see in the real world when it comes to epidemic models. 
+When I started my PhD two years ago, I had never looked at an epidemic model outside of an elementry differential equations course. Fast forward two years, and one Covid-19 later, the bulk of my work is centred around epidemic models. More specifically, *stochastic* epidemic models. Differential equation models are simple and easy to use but are often too rigid since they don't reflect the randomness we see in the real world when it comes to the spread of disease.
 
-This post is going to be a tutorial for implementing/coding a chain binomial epidemic model in Python. This model is sometimes referred to as the Reed-Frost model and was initially used to model epidemic spread in the late 1920s (more details[^1]). 
+This post is going to be a tutorial that I wish I had at the start of my epidemic modelling journey. The aim is to implement/code a chain binomial epidemic model in Python. This model is sometimes referred to as the Reed-Frost model and was initially used to model epidemic spread in the late 1920s (more details[^1]). It is one of the simplest epidemic models as it only focuses on the infection process so take this as the base case. Future posts will dive deeper into the mathematics and how to expand on this model to make it more realistic. 
 
 ## Reed-Frost model 
-The Reed-Frost model is a simple and intuitive mathematical model used to understand how infectious diseases spread through a population. This model helps us predict the number of people who will become infected over time, given some initial conditions.
+The Reed-Frost model helps us predict the number of people who will become infected over time, given some initial conditions. 
 
 ### Intuition 
 Imagine a group of people where some are initially infected with a disease, and others are susceptible but not yet infected. The Reed-Frost model works by dividing time into discrete steps[^2], such as days or weeks. At each time step, each susceptible person has a chance of getting infected based on their contact with infectious individuals.
@@ -41,12 +41,6 @@ The Reed-Frost model is powerful because it captures the essential dynamics of d
 
 ## Python implementation 
 For this tutorial, I am going to try to use as few packages as possible so I'm going to restrict myself to *only* `numpy` and `pandas`. The rest of the code will be base Python. 
-
-So what do we have so far? We know we're going to be working with the Reed-Frost model which is a 2 state compartmental model. This is the class of the model and *not* a specific model. For that we need to add more structure. We need to know the size of population the disease is spreading through, the duration of each step in which events are happening (recall this is a discrete time model), and the last is going to be the transition rate or epidemic dynamics (how the disease is transmitted). The assumptions are as follows: 
-1. 100 epidemic units[^3] with 99 susceptibles and 1 infected units. This is represented as a vector $[S_0, I_0] = [99,1]$ (the subscript $i$ is the time period).
-2. Time period is going to be daily so we set the time delta $\triangle d = 1$. 
-3. Epidemic dynamics will be a density based transmission where we 'count' the number of pairwise interactions between infectious units and susceptibles and divide by the population size. This means that the probabilty of an infection happening has a rate of $\lambda_i= \beta \frac{S_i I_i}{S_i + I_i}$ which translates into a probability of $p_i = \exp\{- \lambda_i * \triangle d \}$[^4].
-
 ```{python}
 # load packages 
 import numpy as np
@@ -57,13 +51,31 @@ import seaborn as sns
 
 sns.set()
 ```
+Let's take stock of what we know at this point. The Reed-Frost model which is a 2-state compartmental model. 
+
+:::{.callout-important}
+This is a class of models and *not* a specific model.
+:::
+
+To specify a model we need to add more structure. We want to know the size of population the disease is spreading through, the duration of each step in which events are happening (recall this is a discrete time model), and the last is going to be the transition rate or epidemic dynamics (how the disease is transmitted). The assumptions are as follows: 
+
+1. 100 epidemic units[^3] with 99 susceptibles and 1 infected units. This is represented as a vector $[S_0, I_0] = [99,1]$ (the subscript $i$ is the time period).
+2. Time period is going to be daily so we set the time delta $\triangle d = 1$. 
+3. Epidemic dynamics will be a density based transmission where we 'count' the number of pairwise interactions between infectious units and susceptibles and divide by the population size. This means that the probabilty of an infection happening has a rate of $\lambda_i= \beta \frac{S_i I_i}{S_i + I_i}$ which translates into a probability of $p_i = \exp\{- \lambda_i * \triangle d \}$[^4].
+
 ```{python}
 # initial values
 time_delta = 1.                 # 1 day 
 initial_pop = [99.,1.]          # population vector 
 parameters0 = 0.01              # daily transmission parameter 
 ```
-With the constants and initial conditions set, its time to move to the main bit of the code which performs the simulation. The function below called `SI_iteration` takes 3 parameter values: 
+With the constants and initial conditions set, its time to move to the main bit of the code which performs the simulation. 
+
+:::{.callout-tip}
+I've been using the term implementing a model and this doesn't really have a set definition. In this case, implementation is done when you can simulate a correct trajectory of the epidemic but in other settings it may mean fitting a model to data, validating, predicting, etc. The scope of an implementation changes with the nature of the problem and is context specific. Its all jargon here. 
+:::
+
+The function below called `SI_iteration` takes 3 parameter values: 
 1. `parameters` - this is a vector of model parameters. For now, this is a 1D vector holding the value for $\beta$. 
 2. `state` - this is a 2D vector containing the counts for each of the states.
 3. `time_delta` - the size (in days) of the discrete time step 
@@ -88,7 +100,7 @@ def SI_iteration(parameters, state, time_delta):
 2. Turn the transition rate into a probability of new infections 
 3. Sample the number of new infections 
 
-Now for using our new function. Taking the initial values for each of the function arguments and plugging them in, we can see that the outcome of a single iteration in our epidemic. 
+I'm going to ignore the mathematics of Step 2 in chunk above *for now* since that will be its own post down the line. The gory details can be found in the paper I mentioned earlier for those curious. Now for using our new function! Taking the initial values for each of the arguments and plugging them in, we can get the outcome of a single iteration or single step of our epidemic process. This is not a complete path! 
 ```{python}
 # single iteration/forward step
 np.random.seed(20240701)                                  # <1>
@@ -99,7 +111,7 @@ print(f'New state: {new_state}')
 1. Set the seed for reproducible value. 
 
 ### Simulate a path
-We can extend the single iteration to sample a full path of the epidemic by calling our function over and over again while changing the state. This is not the most efficient way of performing a simulation but it is easy to understand. I will write another tutorial about doing this efficiently later on... promise. 
+We can extend the single iteration to sample a full path of the epidemic by calling our function over and over again. This is not the most efficient way of performing a simulation but it is easy to understand so it'll do for now. 
 ```{python}
 # simulate full path
 def simulate(initial_state, num_steps):
@@ -113,24 +125,25 @@ def simulate(initial_state, num_steps):
     state = initial_state
 
     while ii < num_steps:
-        state = SI_iteration(parameters0, state, time_delta)
+      # single iteration to update the state
+      state = SI_iteration(parameters0, state, time_delta)
+      # record the outcome
+      S[ii], I[ii] = state
 
-        S[ii], I[ii] = state
-
-        ii += 1
+      ii += 1
 
     return {'Time': np.cumsum(np.repeat(time_delta, num_steps)),
             'Susceptible': S,
             'Infected': I}
 ```
-
-Lets plot the simulation! 
-```{python}
+And run a simulation of 100 steps (note that some of the steps might be non-events since every unit has progressed through the epidemic). There are nice ways of stopping simulations early by using a clever stop condition within the while loop.
+```{python} 
+#| label: epi_dataset
 sample_epi = simulate(initial_pop, 100)
 
 pd.DataFrame(sample_epi).head(10)
 ```
-
+Lets plot the simulation! 
 ```{python}
 #| label: simulated_path
 #| width: 80%
@@ -158,10 +171,11 @@ plt.title('Single path simulation', fontsize=16)  # Add plot title with font siz
 plt.show()
 ```
 
-
 ### Conclusion
-Epidemic models are cool! 
+In this tutorial, I showed one way to implement a chain binomial epidemic model. This basic model is a great starting point for building more complex and realistic models. The function `SI_iteration` uses a simplified version of the [Gillespie algorithm](https://en.wikipedia.org/wiki/Gillespie_algorithm) which is the standard algorithm for simulating stochastic trajectories for these types of systems. I'd also recommend checking out [this blog](https://lewiscoleblog.com/gillespie-algorithm) post by Lewis Cole for an in depth look at the algorithm.
 
+### Next steps
+As far as using epidemic models in the real world goes, simulation is only one half of the coin. The other side has to do with fitting these models. If the problem was reversed and we had observed an epidemic process, recorded the data and created a data set that looks something like @epi_dataset we could then try to find the value of `parameters` which generated that data. This can be done in a variety of ways such as maximum likelihood estimation or Bayesian inference. If this type of problem interests you, I'd highly recommend checking out the [IDDinf 2024](https://gem-epidemics.gitlab.io/iddinf/) inference course. This is a course I will be co-teaching with some incredible people in September 2024 and will go over everything you need to know to fit epidemic models with Bayesian inference. 
 
 [^1]: [Resource here](https://deepblue.lib.umich.edu/bitstream/handle/2027.42/26512/0000050.pdf?sequence=1&isAllowed=y&fbclid=IwAR38zIDg_-vvXCMWHDoy-6rLXAluIa5ggiCmsalzh1IUBFaVxACS6KF3Cms)
 [^2]: I usually work with continuous time models which pose their own challenges. More on this will come in later posts
