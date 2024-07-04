@@ -2,15 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://a-morariu.github.io/posts.html</loc>
-    <lastmod>2024-07-03T18:12:12.057Z</lastmod>
+    <lastmod>2024-07-04T11:42:26.842Z</lastmod>
   </url>
   <url>
     <loc>https://a-morariu.github.io/index.html</loc>
     <lastmod>2024-07-01T16:19:38.165Z</lastmod>
   </url>
   <url>
+    <loc>https://a-morariu.github.io/talks/2024-01-31-Pydata-software-banks/index.html</loc>
+    <lastmod>2024-07-04T11:54:05.964Z</lastmod>
+  </url>
+  <url>
     <loc>https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/index.html</loc>
     <lastmod>2024-07-03T18:20:56.786Z</lastmod>
+  </url>
+  <url>
+    <loc>https://a-morariu.github.io/talks.html</loc>
+    <lastmod>2024-07-04T11:55:26.590Z</lastmod>
+  </url>
+  <url>
+    <loc>https://a-morariu.github.io/talks/index_talk_template.html</loc>
+    <lastmod>2024-07-04T11:41:14.516Z</lastmod>
   </url>
   <url>
     <loc>https://a-morariu.github.io/about.html</loc>

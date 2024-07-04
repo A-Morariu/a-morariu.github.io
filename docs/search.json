@@ -28,6 +28,27 @@
     "text": "Personal and hobbies\n\n\n\n\n\n\nCycling\n\n\n\n\n\nA very famous man once said “I like to ride my bicycle” and I think he was on to something there.\n\n\n\n\n\n\n\n\n\nPhotography\n\n\n\n\n\nI take picture… mostly with a very little camera.\n\n\n\nIf you have any questions about these please get in touch!"
   },
   {
+    "objectID": "talks/2024-01-31-Pydata-software-banks/index.html",
+    "href": "talks/2024-01-31-Pydata-software-banks/index.html",
+    "title": "From code banks to software",
+    "section": "",
+    "text": "As coders, we often build up vast amounts of code that can be used repeatedly and potentially shared with others to make their lives easier. How can we turn those banks of code into libraries? This talk will explore the journey I took to becoming a software developer and the lessons I learned along the way as someone who was not a computer scientist first."
+  },
+  {
+    "objectID": "talks/2024-01-31-Pydata-software-banks/index.html#abstract",
+    "href": "talks/2024-01-31-Pydata-software-banks/index.html#abstract",
+    "title": "From code banks to software",
+    "section": "",
+    "text": "As coders, we often build up vast amounts of code that can be used repeatedly and potentially shared with others to make their lives easier. How can we turn those banks of code into libraries? This talk will explore the journey I took to becoming a software developer and the lessons I learned along the way as someone who was not a computer scientist first."
+  },
+  {
+    "objectID": "talks/2024-01-31-Pydata-software-banks/index.html#slides",
+    "href": "talks/2024-01-31-Pydata-software-banks/index.html#slides",
+    "title": "From code banks to software",
+    "section": "Slides",
+    "text": "Slides\n\n\n\n\n\n Full Screen"
+  },
+  {
     "objectID": "posts/2024-07-01-simulating-epidemics/index.html",
     "href": "posts/2024-07-01-simulating-epidemics/index.html",
     "title": "Simulating an epidemic",
@@ -54,6 +75,34 @@
     "title": "Simulating an epidemic",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nResource here↩︎\nI usually work with continuous time models which pose their own challenges. More on this will come in later posts↩︎\nAn epidemic unit can be anything that we can classify as susceptible or infected. These models are used for humans and animals so its easier to generalize the concept of an epidemic unit. The units can even be aggregated to represent households or farms. It gives us a more flexibility to adapt the scope of the model.↩︎\nFuture post on the interpretable mathematics of epidemic models↩︎"
+  },
+  {
+    "objectID": "talks.html",
+    "href": "talks.html",
+    "title": "Talks",
+    "section": "",
+    "text": "Talks\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFrom code banks to software\n\n\n\n\n\nExploring the lifeline of a coding project and key decisions developers must make along the way\n\n\n\n\n\nJan 31, 2024\n\n\nAlin Morariu\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "talks/index_talk_template.html",
+    "href": "talks/index_talk_template.html",
+    "title": "Talk title",
+    "section": "",
+    "text": "Your abstract"
+  },
+  {
+    "objectID": "talks/index_talk_template.html#abstract",
+    "href": "talks/index_talk_template.html#abstract",
+    "title": "Talk title",
+    "section": "",
+    "text": "Your abstract"
+  },
+  {
+    "objectID": "talks/index_talk_template.html#slides",
+    "href": "talks/index_talk_template.html#slides",
+    "title": "Talk title",
+    "section": "Slides",
+    "text": "Slides\n\n\n\n\n\n Full Screen"
   },
   {
     "objectID": "about.html",

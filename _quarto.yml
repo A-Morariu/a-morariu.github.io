@@ -14,6 +14,8 @@ website:
         text: Home
       - href: posts.qmd
         text: Blog posts
+      - href: talks.qmd 
+        text: Talks
     right:
       - href: Resume_AMorariu.pdf
         text: Resume

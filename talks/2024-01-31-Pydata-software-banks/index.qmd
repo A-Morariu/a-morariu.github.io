@@ -1,0 +1,21 @@
+---
+title: "From code banks to software"
+description: "Exploring the lifeline of a coding project and key decisions developers must make along the way"
+date: 01-31-2024
+categories: [python, PyData, software, git]
+image: main_slide.png 
+format: html
+---
+## Abstract
+ As coders, we often build up vast amounts of code that can be used repeatedly and potentially shared with others to make their lives easier. How can we turn those banks of code into libraries? This talk will explore the journey I took to becoming a software developer and the lessons I learned along the way as someone who was not a computer scientist first.
+
+
+## Slides 
+
+::: {.iframe-container}
+<iframe class="iframe-responsive" scrolling="no" src="SoftwareLifeCycle_PydataJan2024_AMorariu.pdf" style="width: 100%; height: 600px;"></iframe>
+:::
+
+<br>
+
+<a href="SoftwareLifeCycle_PydataJan2024_AMorariu.pdf" class="btn btn-outline-primary"> Full Screen</a>
