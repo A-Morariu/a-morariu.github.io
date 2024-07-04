@@ -11,7 +11,7 @@
     "href": "index.html",
     "title": "Alin Morariu",
     "section": "",
-    "text": "print(my_intro)\nHi, I’m Alin! Welcome to my website. I will be using this site as a way to display some of my work and interests. You can find some of my projects, talks, and the occasional blog post about stuff I’ve found cool and thought was worth sharing."
+    "text": "Github\n  \n  \n    \n     Google Scholar\n  \n\n  \n  \n\nprint(my_intro)\n\nHi, I’m Alin! Welcome to my website. I will be using this site as a way to display some of my work and interests. You can find some of my projects, talks, and the occasional blog post about stuff I’ve found cool and thought was worth sharing.\n\n\nI am a PhD student at Lancaster University in the UK, currently supervised by Prof. Chris Jewell and Prof. Paul Fearnhead. My research focuses on computational challenges for fitting stochastic epidemic models, specifically MCMC algorithms spatio-temporal models for spread of disease."
   },
   {
     "objectID": "index.html#research-interests",
@@ -25,7 +25,7 @@
     "href": "index.html#personal-and-hobbies",
     "title": "Alin Morariu",
     "section": "Personal and hobbies",
-    "text": "Personal and hobbies\n\n\n\n\n\n\nCycling\n\n\n\n\n\nA very famous man once said “I like to ride my bicycle” and I think he was on to something there.\n\n\n\n\n\n\n\n\n\nPhotography\n\n\n\n\n\nI take picture… mostly with a very little camera.\n\n\n\nIf you have any questions about these please get in touch!"
+    "text": "Personal and hobbies\n\n\n\n\n\n\nCycling\n\n\n\n\n\nA very famous man once said “I like to ride my bicycle” and I think he was on to something there.\n\n\n\n\n\n\n\n\n\nPhotography\n\n\n\n\n\nI take picture… mostly with a very little camera."
   },
   {
     "objectID": "talks/2024-01-31-Pydata-software-banks/index.html",
@@ -130,6 +130,6 @@
     "href": "about.html#get-in-touch",
     "title": "About",
     "section": "Get in touch!",
-    "text": "Get in touch!\nBest ways of contacting me is through email!\n\\(\\rightarrow\\) a.morariu@lancaster.ac.uk \\(\\leftarrow\\)"
+    "text": "Get in touch!\nBest ways of contacting me is through email!\n\\(\\rightarrow\\) a.morariu@lancaster.ac.uk\\(\\leftarrow\\)"
   }
 ]

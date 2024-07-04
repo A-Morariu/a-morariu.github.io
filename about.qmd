@@ -37,4 +37,4 @@ My previous work experience can be found on my resume or [my LinkedIn](https://w
 ## Get in touch! 
 Best ways of contacting me is through email! 
 
-$\rightarrow$ [a.morariu@lancaster.ac.uk](mailto:a.morariu@lancaster.ac.uk) $\leftarrow$ 
+$\rightarrow$ [a.morariu@lancaster.ac.uk](mailto:a.morariu@lancaster.ac.uk){.btn .btn-secondary role="button"}$\leftarrow$ 

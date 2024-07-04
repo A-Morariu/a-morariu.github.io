@@ -1,7 +1,9 @@
 ---
 title: "Alin Morariu"
 subtitle: "Personal website, blog, and more"
+page-layout: full
 about:
+  id: hero-heading
   template: trestles
   image: pictures/personal_media/alin-headshot.jpg
   image-shape: rounded
@@ -12,8 +14,10 @@ about:
     - icon: scholar 
       text: Google Scholar 
       href: https://scholar.google.com/citations?hl=en&user=kwg0UwwAAAAJ
+toc: false
 ---
 
+:::{#hero-heading}
 ```{python}
 #| eval: false
 print(my_intro)
@@ -24,20 +28,33 @@ Hi, I’m Alin! Welcome to my website. I will be using this site as a way to dis
 # A bit about me
 
 I am a PhD student at Lancaster University in the UK, currently supervised by [Prof. Chris Jewell](https://scholar.google.com/citations?user=BF1RFL8AAAAJ&hl=en) and [Prof. Paul Fearnhead](https://scholar.google.co.uk/citations?user=_21NhC8AAAAJ&hl=en). My research focuses on computational challenges for fitting stochastic epidemic models, specifically MCMC algorithms spatio-temporal models for spread of disease. 
+:::
+
+::: {.grid}
+
+::: {.g-col-6}
 
 ## Research interests
+
 ::: {.callout-note collapse="true"}
 ### Epidemic modelling
 Epidemic models provide useful insight into how we can manage the spread of disease in both human and animal populations. They can be powerful tools for public policy and pose interesting computational challenges. 
 :::
+
 ::: {.callout-note collapse="true"}
 ### Likelihood inference and MCMC
 Bayesian methods provide robust estimation for complex models where analytical solutions are often infeasible. They allow for exploration of high-dimensional parameter spaces 
 :::
+
 ::: {.callout-note collapse="true"}
 ### Parallel and high performance computing
 One of the best ways to increase the efficiency of fitting models is to take advantage of modern hardware like GPUs and HPC clusters. This can be done by implementing algorithms so they can be run in parallel across more than one device. 
 :::
+
+:::
+
+::: {.g-col-6}
+
 ## Personal and hobbies
 ::: {.callout-note collapse="true"}
 ### Cycling
@@ -47,5 +64,12 @@ A very famous man once said "I like to ride my bicycle" and I think he was on to
 ### Photography
 I take picture... mostly with a very little camera. 
 :::
+:::
 
-If you have any questions about these please get in touch! 
+:::
+
+<br>
+
+::: {.center-text}
+### If you have any questions about these please get in touch! 
+:::
