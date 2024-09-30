@@ -1,0 +1,56 @@
+---
+title: "Git for PhD"
+description: "Git is an invaluable tool that is used to manage code bases, why don't we use it for PhD? "
+author:
+  - name: Alin Morariu
+    #orcid: 0000-0002-5300-3075
+    affiliation: Lancaster University
+    affiliation-url: https://www.lancaster.ac.uk/maths/
+date: 07-11-2024          # MM-DD-YYYY
+categories: [software, dev, git] # self-defined categories
+# image: DSC_6355.jpg
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+code-annotations: hover
+lightbox: auto
+---
+
+Lets start this with a formal description. Git is a distributed version control system that allows developers to collaborate on a project. It tracks changes to files over time, allowing users to easily revert to previous versions, merge changes from different branches, and manage conflicts. It is commonly used in software development to manage source code, but it can also be used for other types of files.
+
+Based on that, we can already see why Git is a tool not on the radar of most PhD students (this is mainly for quantitative PhDs where we write code as a core part of our workflow, think statistics, physics, computer science, etc). It is allows for *collaboration* on projects and often times, PhD students work in siloed areas in their own corner of academia so collaboration isn't at the top of the priority list. However, I found that Git is one of the best things that happened in my PhD life since I can manage my own code base much easier. I'm going to convince you to do the same by showing you my workflow to keep track of work and how it solves/prevents some common issues.
+
+## Why bother? 
+If you've ever "finished" a project only to later return to it, make a copy of a script and add `_final` to the filename, then this is already enough to show that you **need** version control. This is bad practice because it creates copies of the same file, uncertainty about what each file contains, and a cluttered folder. It is a mess which we *can* avoid! 
+
+If you've ever (accidentally) deleted a file only to later need to refer back to it, then you **need** version control.
+
+## Pre-requistes 
+A few requirements to make this all work. Git is the base version control system but has several variants built on top of it which help with different types of projects. The most commonly mentioned one will be [Github](https://github.com) "which is a cloud-based platform where you can store, share, and work together with others to write code".
+
+> Github cloud-based platform where you can store, share, and work together with others to write code
+
+It does some cool things beyond just the version control as well. This website is hosted by GitHub pages for example but that's for another time. 
+
+1. Install [git](https://git-scm.com). It is lightweight so it will barely be noticeable in your onboard storage. 
+2. Make a [Github](https://github.com) account 
+3. Link the two by following [these instructions](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git)
+
+I like to keep a folder/directory on my hardrive called `GitHub` where I know that every sub-directory will be "tracked" by Git. This lets you separate your work and personal files without a direct partitioning of your hardrive, call it a soft partition. At the very least, you can use Github as a cloud-based back up of your work. Each sud-directory in this Github main folder will correspond to a *repository* on the Github account. Once you create a repository, this is a signal to your local installation of Git to start tracking what is happening in the folder. 
+
+::: {.callout-important title="Different ways to interact with Git"}
+My favourite way to use Git is now through my terminal using the [command line](https://cli.github.com) `git` commands. Before I got used to that, I used the [Github Desktop](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop) GUI since it provides a clean interface for doing everything I'm about to go over below. 
+:::
+
+## Basics 
+We can start by creating a repository (colloquially shorten to repo). In the command line, we can use the `git init` command to create a repo within a project folder. Say that I am working on an epidemic model implementation. I can create a `epi_model_implementation` folder within the Github directory then `git init` within that folder to initialize it as a repo. The folder is now being tracked. Along with the repo, Git creates a *branch* which is by default the `master` branch (this can be renamed). 
+
+> `cd Github`
+
+> `mkdir epi_model_implementation`
+
+> `git init`
+
+A README file is also created here. This is a markdown file that you can use to write a description for the folder/project in general. 
+
+## Branching 
+
+
