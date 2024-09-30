@@ -10,18 +10,7 @@
 <atom:link href="https://a-morariu.github.io/posts.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.57</generator>
-<lastBuildDate>Wed, 10 Jul 2024 23:00:00 GMT</lastBuildDate>
-<item>
-  <title></title>
-  <dc:creator>Alin Morariu</dc:creator>
-  <link>https://a-morariu.github.io/posts/2024-07-11/</link>
-  <description><![CDATA[ undefined ]]></description>
-  <category>software</category>
-  <category>dev</category>
-  <category>git</category>
-  <guid>https://a-morariu.github.io/posts/2024-07-11/</guid>
-  <pubDate>Wed, 10 Jul 2024 23:00:00 GMT</pubDate>
-</item>
+<lastBuildDate>Sun, 30 Jun 2024 23:00:00 GMT</lastBuildDate>
 <item>
   <title>Simulating an epidemic</title>
   <dc:creator>Alin Morariu</dc:creator>
@@ -600,15 +589,6 @@ font-style: inherit;"># Add plot title with font size</span></span>
   <guid>https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/</guid>
   <pubDate>Sun, 30 Jun 2024 23:00:00 GMT</pubDate>
   <media:content url="https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/DSC_6355.jpg" medium="image" type="image/jpeg"/>
-</item>
-<item>
-  <title></title>
-  <dc:creator>Alin Morariu</dc:creator>
-  <link>https://a-morariu.github.io/posts/2024-01-01-first-post/</link>
-  <description><![CDATA[ undefined ]]></description>
-  <category>other</category>
-  <guid>https://a-morariu.github.io/posts/2024-01-01-first-post/</guid>
-  <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

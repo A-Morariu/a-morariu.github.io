@@ -3,6 +3,8 @@
 /// Colors 
 $cream: #FDFBF7;
 $light-gray: #adb5bd; 
+$sweater-navy: #2f4550;
+$jean-blue: #316278; 
 
 // Code
 $code-annotation-higlight-bg: $light-gray;
@@ -11,18 +13,18 @@ $code-annotation-higlight-bg: $light-gray;
 $code-bg: $cream;
 
 // Callout 
-$callout-color-note: $light-gray;
+$callout-color-note: $jean-blue;
 
 /*-- scss:rules --*/
 
 h1, h2 {
   letter-spacing: 5px;
   font-weight: 800; 
-  color: darkcyan;
+  color: sweater-navy;
 }
 
 h3 {
   font-weight: 700;
-  color: darkcyan;
+  color: sweater-navy;
 }
 
