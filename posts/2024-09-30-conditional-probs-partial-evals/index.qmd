@@ -12,6 +12,8 @@ image: AMP00068.jpg
 draft: false
 code-annotations: hover
 lightbox: auto
+html:
+    code-line-numbers: true
 ---
 
 During my undergraduate degree, I always struggled with the concept of _computing_ statistical quantities. I couldn't wrap my head around what commands to use in my editor to mimic the math that I could write on the page. Fast forward a several years and lots of coding assignments, I now kind of get it. I'm writing this blog post to highlight one of the nicest links between the math and the computation that I've come across and the motivation behind the title of this post - conditional probabilities _are_ partial function evaluations. 
@@ -31,7 +33,8 @@ L(\beta_0, \beta_1 ; x) &= \prod_{i = 1}^n P(y_i) \\
 &= \prod_{i = 1}^n \frac{1}{\sqrt{2 \pi \cdot0.52^2}} e^{-\frac{(y_i - (\beta_0 + \beta_1 x_i))^2}{2 \cdot 0.5^2}}
 \end{align}
 Here's a simulated data set from this model. 
-```{python, echp = false}
+```{python}
+#| echo: false
 import numpy as np 
 import matplotlib.pyplot as plt
 import seaborn as sns 
