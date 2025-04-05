@@ -64,6 +64,12 @@ A very famous man once said "I like to ride my bicycle" and I think he was on to
 ### Photography
 I take picture... mostly with a very little camera. 
 :::
+
+::: {.callout-note collapse="true"}
+### Coffee
+Everything is better with a cup of coffee! 
+:::
+
 :::
 
 :::
