@@ -36,17 +36,17 @@ I am a PhD student at Lancaster University in the UK, currently supervised by [P
 
 ## Research interests
 
-::: {.callout-note collapse="true"}
+::: {.callout-note collapse="true" icon="false"}
 ### Epidemic modelling
 Epidemic models provide useful insight into how we can manage the spread of disease in both human and animal populations. They can be powerful tools for public policy and pose interesting computational challenges. 
 :::
 
-::: {.callout-note collapse="true"}
+::: {.callout-note collapse="true" icon="false"}
 ### Likelihood inference and MCMC
 Bayesian methods provide robust estimation for complex models where analytical solutions are often infeasible. They allow for exploration of high-dimensional parameter spaces 
 :::
 
-::: {.callout-note collapse="true"}
+::: {.callout-note collapse="true" icon="false"}
 ### Parallel and high performance computing
 One of the best ways to increase the efficiency of fitting models is to take advantage of modern hardware like GPUs and HPC clusters. This can be done by implementing algorithms so they can be run in parallel across more than one device. 
 :::
@@ -56,16 +56,16 @@ One of the best ways to increase the efficiency of fitting models is to take adv
 ::: {.g-col-6}
 
 ## Personal and hobbies
-::: {.callout-note collapse="true"}
+::: {.callout-note collapse="true" icon="false"}
 ### Cycling
 A very famous man once said "I like to ride my bicycle" and I think he was on to something there.
 :::
-::: {.callout-note collapse="true"}
+::: {.callout-note collapse="true" icon="false"}
 ### Photography
 I take picture... mostly with a very little camera. 
 :::
 
-::: {.callout-note collapse="true"}
+::: {.callout-note collapse="true" icon="false"}
 ### Coffee
 Everything is better with a cup of coffee... especially writing a blog post!
 :::
