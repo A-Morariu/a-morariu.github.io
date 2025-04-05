@@ -9,10 +9,10 @@
 <link>https://a-morariu.github.io/posts.html</link>
 <atom:link href="https://a-morariu.github.io/posts.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.5.57</generator>
+<generator>quarto-1.6.43</generator>
 <lastBuildDate>Sun, 29 Sep 2024 23:00:00 GMT</lastBuildDate>
 <item>
-  <title>Conditional probabilities are partial function evaluations</title>
+  <title>Conditional probabilities are partial function applications</title>
   <dc:creator>Alin Morariu</dc:creator>
   <link>https://a-morariu.github.io/posts/2024-09-30-conditional-probs-partial-evals/</link>
   <description><![CDATA[ 
@@ -21,13 +21,13 @@
 
 
 
-<p>During my undergraduate degree, I always struggled with the concept of <em>computing</em> statistical quantities. I couldn’t wrap my head around what commands to use in my editor to mimic the math that I could write on the page. Fast forward a several years and lots of coding assignments, I now kind of get it. I’m writing this blog post to highlight one of the nicest links between the math and the computation that I’ve come across and the motivation behind the title of this post - conditional probabilities <em>are</em> partial function evaluations.</p>
+<p>During my undergraduate degree, I always struggled with the concept of <em>computing</em> statistical quantities. I couldn’t wrap my head around what commands to use in my editor to mimic the math that I could write on the page. Fast forward a several years and lots of coding assignments, I now kind of get it. I’m writing this blog post to highlight one of the nicest links between the math and the computation that I’ve come across and the motivation behind the title of this post - conditional probabilities <em>are</em> partial function applications.</p>
 <section id="quick-refresher-on-conditional-probabilities" class="level2">
 <h2 class="anchored" data-anchor-id="quick-refresher-on-conditional-probabilities">Quick refresher on conditional probabilities</h2>
 <p>Let’s start with a quick recap of what exactly a conditional probability is. Suppose we have 2 events, <img src="https://latex.codecogs.com/png.latex?A"> and <img src="https://latex.codecogs.com/png.latex?B">. We say that the conditional probability of B given A is <img src="https://latex.codecogs.com/png.latex?P(B%20%5Cvert%20A)%20=%20%5Cfrac%7BP(A%20%5Cbigcap%20B)%7D%7BP(A)%7D"> We assume that <img src="https://latex.codecogs.com/png.latex?P(A)%3E0">. The intuition here is that we are updating our belief about <img src="https://latex.codecogs.com/png.latex?B"> knowing that something specific about <img src="https://latex.codecogs.com/png.latex?A"> has occured. If these events are independent, then the above equation simplifies since we <img src="https://latex.codecogs.com/png.latex?P(A%20%5Cbigcap%20B)%20=%20P(A)%20P(B)"> (i.e.&nbsp;knowing something about <img src="https://latex.codecogs.com/png.latex?A"> gives you no additional information about <img src="https://latex.codecogs.com/png.latex?B">).</p>
 <p>However, conditional probability extends far beyond simple events. In statistical modeling, conditional probabilities form the backbone of likelihood-based inference. When we model data, we often use conditional probabilities to express how likely the observed data is, given a set of model parameters (data generating model). This is where the likelihood function comes into play. The likelihood function is an unnormalized probability distribution that is a function of the model parameters, not the data. It captures the plausibility of the parameters given the data, and by conditioning on different parameters, we can explore various hypotheses or refine our model.</p>
 <p>For example, in Bayesian inference, we <em>condition</em> on observed data to update our prior beliefs about the model parameters, yielding the posterior distribution. This conditional framework underpins nearly all of modern statistical inference, from maximum likelihood estimation to more complex Markov Chain Monte Carlo inference schemes. These likelihood functions can be very easy to write on paper but difficult to code and that’s what I want to dive into here. Let’s define a model with two parameters. <img src="https://latex.codecogs.com/png.latex?y_i%20%5Csim%20N(%5Cbeta_0%20+%20%5Cbeta_1%20x_i,%202%5E2)"> Some may recognize this as a linear regression. Our dependent random varialbe <img src="https://latex.codecogs.com/png.latex?y"> follows a Normal distribution which has a mean that depends on a linear transformation of the independent variable <img src="https://latex.codecogs.com/png.latex?x">. We can write out the likelihood function of this model using the probability density function of the Normal. <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Balign%7D%0AL(%5Cbeta_0,%20%5Cbeta_1%20;%20x)%20&amp;=%20%5Cprod_%7Bi%20=%201%7D%5En%20P(y_i)%20%5C%5C%0A&amp;=%20%5Cprod_%7Bi%20=%201%7D%5En%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%20%5Cpi%20%5Ccdot0.52%5E2%7D%7D%20e%5E%7B-%5Cfrac%7B(y_i%20-%20(%5Cbeta_0%20+%20%5Cbeta_1%20x_i))%5E2%7D%7B2%20%5Ccdot%200.5%5E2%7D%7D%0A%5Cend%7Balign%7D"> Here’s a simulated data set from this model.</p>
-<div id="d3791362" class="cell" data-execution_count="2">
+<div id="2ac5487e" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># parameter values </span></span>
@@ -95,7 +95,7 @@ background-color: null;
 font-style: inherit;">100</span></span>
 <span id="cb1-18">    )</span></code></pre></div>
 </div>
-<div id="a923d60b" class="cell" data-execution_count="3">
+<div id="ed201e2d" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Scatter plot of the data</span></span>
@@ -111,24 +111,24 @@ font-style: inherit;">'blue'</span>)</span></code></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="https://a-morariu.github.io/posts/2024-09-30-conditional-probs-partial-evals/index_files/figure-html/cell-4-output-1.png" width="561" height="415" class="figure-img"></a></p>
+<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="https://a-morariu.github.io/posts/2024-09-30-conditional-probs-partial-evals/index_files/figure-html/cell-4-output-1.png" width="561" height="420" class="figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="partial-function-evaluations" class="level2">
-<h2 class="anchored" data-anchor-id="partial-function-evaluations">Partial Function Evaluations</h2>
-<p>In Python, partial function evaluation is a feature provided by <code>functools</code> package with the <code>partial</code> function. It allows you to take a function and fix some of its arguments, returning a new function that takes fewer arguments. The similarity to conditional probabilities lies in this idea of fixing known inputs. This is a nice feature of Python - we can pass around functions as first class objects (an entity that can be dynamically created, destroyed, passed to a function, returned as a value, and have all the rights as other variables in the programming language have).</p>
+<section id="partial-function-applications" class="level2">
+<h2 class="anchored" data-anchor-id="partial-function-applications">Partial function applications</h2>
+<p>In Python, partial function applications is a feature provided by <code>functools</code> package with the <code>partial</code> function. It allows you to take a function and fix some of its arguments, returning a new function that takes fewer arguments. The similarity to conditional probabilities lies in this idea of fixing known inputs. This is a nice feature of Python - we can pass around functions as first class objects (an entity that can be dynamically created, destroyed, passed to a function, returned as a value, and have all the rights as other variables in the programming language have).</p>
 <p>Let’s look at an example.</p>
-<div id="140a2905" class="cell" data-execution_count="4">
+<div id="486cfb26" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> functools <span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> partial </span></code></pre></div>
 </div>
-<div id="2a6ca296" class="cell" data-execution_count="5">
+<div id="c8897205" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -149,8 +149,8 @@ font-style: inherit;">return</span> a<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>b</span></code></pre></div>
 </div>
-<p>We can partially evaluate the function by “fixing” one of the parameters values to a specific value. For example, fix <code>a=2</code>.</p>
-<div id="23f5297e" class="cell" data-execution_count="6">
+<p>We can partially apply the function by “fixing” one of the parameters values to a specific value. For example, fix <code>a=2</code>.</p>
+<div id="9de9c5fa" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">multiply_by_2 <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> partial(my_function, a <span class="op" style="color: #5E5E5E;
@@ -174,7 +174,7 @@ font-style: inherit;">4</span>))                 <span class="co" style="color: 
 background-color: null;
 font-style: inherit;"># this returns 8</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>functools.partial(&lt;function my_function at 0x1186877e0&gt;, a=2)
+<pre><code>functools.partial(&lt;function my_function at 0x14f4972e0&gt;, a=2)
 8</code></pre>
 </div>
 </div>
@@ -182,13 +182,13 @@ font-style: inherit;"># this returns 8</span></span></code></pre></div>
 </section>
 <section id="why-does-this-analogy-work" class="level2">
 <h2 class="anchored" data-anchor-id="why-does-this-analogy-work">Why does this analogy work?</h2>
-<p>The analogy between partial function evaluation and conditional probability is very nice because both involve reducing complexity by “conditioning” on known information. In statistics, we’re conditioning on known events/realizations, while in programming, we’re fixing known inputs/data.</p>
+<p>The analogy between partial function applications and conditional probability is very nice because both involve reducing complexity by “conditioning” on known information. In statistics, we’re conditioning on known events/realizations, while in programming, we’re fixing known inputs/data.</p>
 <p>Consider this: when you fix one argument of a function, you’re effectively “conditioning” the function on that known value. Similarly, conditional probability refines the likelihood of an event by fixing certain known information. This way of thinking can be particularly powerful when designing simulations or modeling problems where we frequently update our beliefs based on new information.</p>
 </section>
 <section id="apply-it-to-our-model" class="level2">
 <h2 class="anchored" data-anchor-id="apply-it-to-our-model">Apply it to our model</h2>
 <p>Lets create the likelihood function of our model. I’m going to take advantage of the <code>logpdf</code> method of the normal distribution which ‘scipy’ has already implemented. It’s always good practice to allocate these computations to well tested and documented libraries so we avoid any algebraic mistakes in our code.</p>
-<div id="66be01fb" class="cell" data-execution_count="7">
+<div id="b0b72a5e" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -241,11 +241,11 @@ font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"</span>)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>log-prob eval: -66.95622048686633</code></pre>
+<pre><code>log-prob eval: -72.04687255986312</code></pre>
 </div>
 </div>
 <p>Now we can use the <code>partial</code> to get the conditional likelihood of <code>beta0</code> given <code>beta1</code>.</p>
-<div id="0ba3f354" class="cell" data-execution_count="8">
+<div id="0e4c7954" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">conditional_likelihood <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> partial(model_likelihood, beta1 <span class="op" style="color: #5E5E5E;
@@ -281,16 +281,16 @@ font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"</span>)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Conditional log-likelihood: functools.partial(&lt;function model_likelihood at 0x118687600&gt;, beta1=0.1)
-Check: -66.95622048686633</code></pre>
+<pre><code>Conditional log-likelihood: functools.partial(&lt;function model_likelihood at 0x14f4971a0&gt;, beta1=0.1)
+Check: -72.04687255986312</code></pre>
 </div>
 </div>
 <p>And they are the same as before! This mirrors how we compute conditional probabilities by progressively refining our estimate as more information becomes available. For example, if you found some information saying that <code>beta1</code> should be 0.5, you can fix that using this technique. All you need to do then is optimize the (log) likelihood for the other parameter.</p>
 </section>
 <section id="closing-thoughts" class="level2">
 <h2 class="anchored" data-anchor-id="closing-thoughts">Closing thoughts</h2>
-<p>The parallel between partial function evaluations and conditional probabilities provides an intuitive bridge between coding and probability theory. By conditioning on known values, both in probability and programming, we can simplify complex systems and gain clearer insights into the behavior of the remaining uncertainties.</p>
-<p>In your next coding or probability problem, try thinking of how partial evaluations might represent conditioned states of knowledge. This perspective can make otherwise complex ideas feel a bit more manageable—and highlight the deep connections between computation and probability theory.</p>
+<p>The parallel between partial function applications and conditional probabilities provides an intuitive bridge between coding and probability theory. By conditioning on known values, both in probability and programming, we can simplify complex systems and gain clearer insights into the behavior of the remaining uncertainties.</p>
+<p>In your next coding or probability problem, try thinking of how partial applications might represent conditioned states of knowledge. This perspective can make otherwise complex ideas feel a bit more manageable—and highlight the deep connections between computation and probability theory.</p>
 <section id="thanks-for-reading" class="level3">
 <h3 class="anchored" data-anchor-id="thanks-for-reading">Thanks for reading</h3>
 <p>In my spare time, I like to take photos so I’m going to add one photo I like at the end of each post as a thank you :) <a href="AMP00068.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Lake District, England, 2022"><img src="https://a-morariu.github.io/posts/2024-09-30-conditional-probs-partial-evals/AMP00068.jpg" class="img-fluid" alt="Lake District, England, 2022"></a></p>
