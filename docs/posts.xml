@@ -10,7 +10,1445 @@
 <atom:link href="https://a-morariu.github.io/posts.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.6.43</generator>
-<lastBuildDate>Sun, 29 Sep 2024 23:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 26 Jun 2025 23:00:00 GMT</lastBuildDate>
+<item>
+  <title>Metropolis-Hastings in JAX</title>
+  <dc:creator>Alin Morariu</dc:creator>
+  <link>https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>One of my favourite things to do is to translate math to code and code to math. Algorithms tend to be written down on paper in a way that is easy to read but not always obvious to implement. In this post, I’m going to go through the Metropolis-Hastings algorithm and show one way of implementing it. There are many ways, some are slower, some are faster, but this is one is mine.</p>
+<section id="bayesian-statistics-and-mcmc" class="level2">
+<h2 class="anchored" data-anchor-id="bayesian-statistics-and-mcmc">Bayesian statistics and MCMC</h2>
+<p>The set up for Bayesian problems goes something like this… <em>given</em> some observed data we <em>assume</em> it comes from a data generating process (we call this the model), so we want to <em>estimate</em> the parameters of the model. Let <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BD%7D"> be the observed data and <img src="https://latex.codecogs.com/png.latex?%5Ctheta"> be the model parameters and we can write the following:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cpi(%5Ctheta%20%5Cmid%20%5Cmathcal%7BD%7D)%20%5Cpropto%20p(%5Ctheta)%20%5C,%20%5Cmathcal%7BL%7D(%5Cmathcal%7BD%7D%20%5Cmid%20%5Ctheta)%0A"></p>
+<p>Where <img src="https://latex.codecogs.com/png.latex?p(%5Ctheta)"> is called the prior distribution (on the model parameters), <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D(%5Cmathcal%7BD%7D%20%5Cmid%20%5Ctheta)"> is the likelihood function, and <img src="https://latex.codecogs.com/png.latex?%5Cpi(%5Ctheta%20%5Cmid%20%5Cmathcal%7BD%7D)"> is the posterior. The goal of MCMC is to explore the probability space that is the posteruor distribution. In this post, the posterior distribution is going to be very simple (so much so that you can work it out by hand) but you can imagine that for larger, more complex models, these posterior distributions will not be “nice” to work with. What’s cool about MCMC algorithms, is that they will (eventually) be able to generate samples from these complex posterior distributions so we can find the optimal parameter values for out models.</p>
+</section>
+<section id="metropolis-hastings" class="level2">
+<h2 class="anchored" data-anchor-id="metropolis-hastings">Metropolis-Hastings</h2>
+<p>The Metropolis-Hastings (MH) algorithm is a fundamental MCCM method designed to generate samples from complex probability distributions, such as our posterior. It works when direct sampling isn’t possible or when only an unnormalized density function is available. The algorithm goes something like this:</p>
+<p>At each step <img src="https://latex.codecogs.com/png.latex?t">, the algorithm proposes a new state <img src="https://latex.codecogs.com/png.latex?%5Ctheta%5E*"> from a proposal distribution <img src="https://latex.codecogs.com/png.latex?q(%5Ctheta%5E*%7C%5Ctheta_t)">, which often depends on the current state <img src="https://latex.codecogs.com/png.latex?%5Ctheta_t">. The proposed state is then accepted with a probability <img src="https://latex.codecogs.com/png.latex?%5Calpha">, known as the Metropolis-Hastings acceptance ratio:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Calpha(%5Ctheta_t,%20%5Ctheta%5E*)%20=%20%5Cmin%5Cleft(1,%20%5Cfrac%7B%5Cpi(%5Ctheta%5E*)q(%5Ctheta_t%7C%5Ctheta%5E*)%7D%7B%5Cpi(%5Ctheta_t)q(%5Ctheta%5E*%7C%5Ctheta_t)%7D%5Cright)%0A"></p>
+<p>If the proposed state is accepted, <img src="https://latex.codecogs.com/png.latex?%5Ctheta_%7Bt+1%7D%20=%20%5Ctheta%5E*">; otherwise, the chain remains at its current state, <img src="https://latex.codecogs.com/png.latex?%5Ctheta_%7Bt+1%7D%20=%20%5Ctheta_t"><sup>1</sup>. This acceptance criterion is crucial for correcting any bias introduced by the proposal distribution, ensuring that the generated Markov chain has <img src="https://latex.codecogs.com/png.latex?%5Cpi(%5Ctheta)"> as its stationary distribution. This outlines a procedure that we can easily write into a <code>for</code> loop; however that style of implementation tends to be slow and cumbersome.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you’d like to see the algorithm, I’d recommend checking out <a href="https://arxiv.org/abs/2407.12751">Scalable Monte Carlo for Bayesian Learning</a>.</p>
+</div>
+</div>
+</section>
+<section id="data-simulation" class="level2">
+<h2 class="anchored" data-anchor-id="data-simulation">Data simulation</h2>
+<div id="4756ee44" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> jax</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> jax.numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> jnp</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> distrax</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> seaborn <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> sns</span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> time </span>
+<span id="cb1-8"></span>
+<span id="cb1-9"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> typing <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Callable, Tuple</span></code></pre></div>
+</div>
+<p>We need some observed data so we will simulate it from a 1-dimensional Gaussian distribution.</p>
+<div id="6317e14e" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">rng_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jax.random.PRNGKey(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20250627</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># use a fixed seed for reproducibility</span></span>
+<span id="cb2-2"></span>
+<span id="cb2-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># define the parameters of our *true* data-generating model</span></span>
+<span id="cb2-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># true_mean is what we are aiming to "discover"/estimate through MCMC</span></span>
+<span id="cb2-5">true_mean <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.array(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4.2</span>, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>jnp.float32)</span>
+<span id="cb2-6">true_stddev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.array(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>jnp.float32)</span>
+<span id="cb2-7"></span>
+<span id="cb2-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># this model represents the process that generates the observed data.</span></span>
+<span id="cb2-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> my_model(mean, stddev):</span>
+<span id="cb2-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> distrax.Normal(loc<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>mean, scale<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>stddev)</span>
+<span id="cb2-11"></span>
+<span id="cb2-12">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> my_model(mean <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> true_mean, stddev<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> true_stddev)</span>
+<span id="cb2-13"></span>
+<span id="cb2-14">observed_data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.sample(seed <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng_key, sample_shape<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>,))</span></code></pre></div>
+</div>
+<div id="ea153175" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># plot the observed data - think of this as exploratory data analysis</span></span>
+<span id="cb3-2">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb3-3">sns.histplot(observed_data, bins<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span>, kde<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, stat<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'density'</span>, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'green'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Observed Data Density'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>)</span>
+<span id="cb3-4">plt.title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Histogram of Observed Data'</span>)</span>
+<span id="cb3-5">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Value'</span>)</span>
+<span id="cb3-6">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Density'</span>)</span>
+<span id="cb3-7">plt.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">':'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>)</span>
+<span id="cb3-8">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-4-output-1.png" width="738" height="376" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Problem statement</strong>: given the data above, estimate the mean of the data generating model given the standard deviation is 1.5. <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathcal%7BD%7D%20%5Csim%20N(%5Cmu,%201.5%5E2)%20%5Cquad%20%5Cleftarrow%20%5Ctext%7BFind%20%7D%20%5Cmu%0A"></p>
+</div>
+</div>
+<p>Now we can create a function that builds our target log-probability function (i.e.&nbsp;the posterior).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In a data science workflow, we won’t know for sure that our model is correct since the data is not simulated. So from here on, we will pretend that we do not <em>know</em> the data is normal, but instead <em>assume</em> that it is.</p>
+</div>
+</div>
+<div id="bc7b437c" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># create the flat prior distribution (Normal(0, 10^2) for the parameter mu)</span></span>
+<span id="cb4-2">prior_mean <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.array(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span>, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>jnp.float32)</span>
+<span id="cb4-3">prior_stddev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.array(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10.0</span>, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>jnp.float32)</span>
+<span id="cb4-4"></span>
+<span id="cb4-5">prior_distribution <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> distrax.Normal(loc<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>prior_mean, scale<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>prior_stddev)</span></code></pre></div>
+</div>
+<div id="91a6d44c" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> make_target_log_prob_fn(prior_dist: distrax.Distribution, </span>
+<span id="cb5-2">                                  obs_data: jax.Array, </span>
+<span id="cb5-3">                                  obs_likelihood_stddev: jax.Array):</span>
+<span id="cb5-4">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb5-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  Factory function to create a callable for the target log-probability (posterior).</span></span>
+<span id="cb5-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  This function forms a closure over the prior distribution, observed data,</span></span>
+<span id="cb5-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  and the likelihood standard deviation.</span></span>
+<span id="cb5-8"></span>
+<span id="cb5-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  Args:</span></span>
+<span id="cb5-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    prior_dist (distrax.Distribution): The prior distribution for the parameter mu.</span></span>
+<span id="cb5-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    obs_data (jax.Array): The observed data.</span></span>
+<span id="cb5-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    obs_likelihood_stddev (jax.Array): The standard deviation for the data likelihood.</span></span>
+<span id="cb5-13"></span>
+<span id="cb5-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  Returns:</span></span>
+<span id="cb5-15"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    A callable function `target_log_prob_fn(x)` that returns the unnormalized</span></span>
+<span id="cb5-16"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    log-posterior probability of mu given the observed data.</span></span>
+<span id="cb5-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  """</span></span>
+<span id="cb5-18">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@jax.jit</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># JIT compile the log_prob function</span></span>
+<span id="cb5-19">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> target_log_prob_fn(x):</span>
+<span id="cb5-20">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb5-21"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Calculates the unnormalized log-posterior probability for a given parameter value 'x'.</span></span>
+<span id="cb5-22"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    This is proportional to log(prior(x)) + log(likelihood(observed_data | x)).</span></span>
+<span id="cb5-23"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    """</span></span>
+<span id="cb5-24">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># calculate the log-probability of 'x' under the prior distribution</span></span>
+<span id="cb5-25">    log_prior <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> prior_dist.log_prob(x)</span>
+<span id="cb5-26"></span>
+<span id="cb5-27">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># define the likelihood distribution for the observed data, assuming 'x' is the mean</span></span>
+<span id="cb5-28">    likelihood_dist <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> distrax.Normal(loc<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>x, scale<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>obs_likelihood_stddev)</span>
+<span id="cb5-29"></span>
+<span id="cb5-30">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># calculate the log-probability of the observed data under this likelihood</span></span>
+<span id="cb5-31">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># and sum over all data points (assuming independence).</span></span>
+<span id="cb5-32">    log_likelihood <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(likelihood_dist.log_prob(obs_data))</span>
+<span id="cb5-33"></span>
+<span id="cb5-34">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># unnormalized log-posterior is the sum of the log-prior and log-likelihood.</span></span>
+<span id="cb5-35">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> log_prior <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> log_likelihood</span>
+<span id="cb5-36">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> target_log_prob_fn</span></code></pre></div>
+</div>
+<p>Let’s test that it works.</p>
+<div id="f3d4dbc9" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># create the specific target_log_prob_callable using our defined prior, observed data, and likelihood stddev.</span></span>
+<span id="cb6-2">target_log_prob_fn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> make_target_log_prob_fn(</span>
+<span id="cb6-3">    prior_distribution, observed_data, true_stddev)</span>
+<span id="cb6-4"></span>
+<span id="cb6-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># test the target_log_prob_callable function at a few points.</span></span>
+<span id="cb6-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># `prior_mean` (0.0) is a good test point for the parameter 'x'.</span></span>
+<span id="cb6-7"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Log-posterior at prior mean (</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>prior_mean<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>item()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">): </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>target_log_prob_fn(prior_mean)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>item()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb6-8"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Log-posterior at 6.0: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>target_log_prob_fn(jnp.array(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6.0</span>))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>item()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Log-posterior at prior mean (0.00): -229.0388
+Log-posterior at 6.0: -101.6034</code></pre>
+</div>
+</div>
+</section>
+<section id="a-modular-solution" class="level2">
+<h2 class="anchored" data-anchor-id="a-modular-solution">A modular solution</h2>
+<p>The goal in this implementation is to “section” off parts of the algorithm that we can allocate to a function that does one thing (a specialist of sorts). The most obvious candidate for this is the proposal function <img src="https://latex.codecogs.com/png.latex?Q(x'%7Cx;%20%5Csigma)">.</p>
+<div id="21ca9815" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">proposal_stddev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.array(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span>, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>jnp.float32)</span>
+<span id="cb8-2"></span>
+<span id="cb8-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> make_proposal_distribution_fn(proposal_stddev_val):</span>
+<span id="cb8-4">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb8-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  Factory function to create a callable that generates a Normal proposal distribution.</span></span>
+<span id="cb8-6"></span>
+<span id="cb8-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  Args:</span></span>
+<span id="cb8-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    proposal_stddev_val (jax.Array): The standard deviation for the proposal distribution.</span></span>
+<span id="cb8-9"></span>
+<span id="cb8-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  Returns:</span></span>
+<span id="cb8-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    A callable function `proposal_dist_fn(center_val)` that returns a</span></span>
+<span id="cb8-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    distrax.Normal object centered at `center_val` with</span></span>
+<span id="cb8-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    the given `proposal_stddev_val`.</span></span>
+<span id="cb8-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  """</span></span>
+<span id="cb8-15">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> proposal_dist_fn(center_val):</span>
+<span id="cb8-16">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb8-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Creates a Normal distribution centered at `center_val`.</span></span>
+<span id="cb8-18"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    """</span></span>
+<span id="cb8-19">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> distrax.Normal(loc<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>center_val, scale<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>proposal_stddev_val)</span>
+<span id="cb8-20">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> proposal_dist_fn</span>
+<span id="cb8-21"></span>
+<span id="cb8-22"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create the specific proposal distribution callable using our global standard deviation.</span></span>
+<span id="cb8-23">proposal_distribution_fn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> make_proposal_distribution_fn(proposal_stddev)</span></code></pre></div>
+</div>
+<p>Since the algorithm requires several probability evaluations, I liked the idea of bundling up these calculations into one function (this can be better implemented by having an individual function for each probability since that would be an easier system to unit test).</p>
+<div id="451d92ab" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> make_compute_mh_log_probabilities(target_log_prob_fn, proposal_dist_fn):</span>
+<span id="cb9-2">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> compute_mh_log_probabilities(current_sample, proposed_sample):</span>
+<span id="cb9-3">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb9-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        Computes all necessary log probabilities for the Metropolis-Hastings acceptance ratio.</span></span>
+<span id="cb9-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        This function implicitly accesses target_log_prob_fn and proposal_dist_fn from the closure.</span></span>
+<span id="cb9-6"></span>
+<span id="cb9-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        Args:</span></span>
+<span id="cb9-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            current_sample (jax.Array): The current value in the MCMC chain.</span></span>
+<span id="cb9-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            proposed_sample (jax.Array): The proposed candidate value.</span></span>
+<span id="cb9-10"></span>
+<span id="cb9-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        Returns:</span></span>
+<span id="cb9-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            A tuple containing:</span></span>
+<span id="cb9-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            - proposed_target_log_prob (jax.Array): Log-prob of proposed_sample under target.</span></span>
+<span id="cb9-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            - current_target_log_prob (jax.Array): Log-prob of current_sample under target.</span></span>
+<span id="cb9-15"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            - log_proposal_forward_prob (jax.Array): Log-prob of proposing proposed_sample from current_sample.</span></span>
+<span id="cb9-16"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            - log_proposal_reverse_prob (jax.Array): Log-prob of proposing current_sample from proposed_sample.</span></span>
+<span id="cb9-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        """</span></span>
+<span id="cb9-18">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Calculate the log-probability of the proposed sample under the target distribution.</span></span>
+<span id="cb9-19">        proposed_target_log_prob <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> target_log_prob_fn(proposed_sample)</span>
+<span id="cb9-20"></span>
+<span id="cb9-21">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Calculate the log-probability of the current sample under the target distribution.</span></span>
+<span id="cb9-22">        current_target_log_prob <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> target_log_prob_fn(current_sample)</span>
+<span id="cb9-23"></span>
+<span id="cb9-24">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Define the proposal distribution for the forward step (current -&gt; proposed)</span></span>
+<span id="cb9-25">        proposal_forward_dist <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> proposal_dist_fn(current_sample)</span>
+<span id="cb9-26">        log_proposal_forward_prob <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> proposal_forward_dist.log_prob(proposed_sample)</span>
+<span id="cb9-27"></span>
+<span id="cb9-28">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Define the proposal distribution for the reverse step (proposed -&gt; current)</span></span>
+<span id="cb9-29">        proposal_reverse_dist <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> proposal_dist_fn(proposed_sample)</span>
+<span id="cb9-30">        log_proposal_reverse_prob <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> proposal_reverse_dist.log_prob(current_sample)</span>
+<span id="cb9-31"></span>
+<span id="cb9-32">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (proposed_target_log_prob, current_target_log_prob,</span>
+<span id="cb9-33">                log_proposal_forward_prob, log_proposal_reverse_prob)</span>
+<span id="cb9-34">        </span>
+<span id="cb9-35">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> compute_mh_log_probabilities</span>
+<span id="cb9-36">    </span>
+<span id="cb9-37">compute_mh_log_probabilities <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> make_compute_mh_log_probabilities(</span>
+<span id="cb9-38">    target_log_prob_fn, </span>
+<span id="cb9-39">    proposal_distribution_fn</span>
+<span id="cb9-40">    )</span></code></pre></div>
+</div>
+<p>And finally for the algorithm!</p>
+<div id="cb996c63" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> make_metropolis_hastings_step(target_log_prob_fn, proposal_dist_fn):</span>
+<span id="cb10-2">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb10-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  Factory function to create a Metropolis-Hastings step function with a closure</span></span>
+<span id="cb10-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  over the target log-probability function and the proposal distribution callable.</span></span>
+<span id="cb10-5"></span>
+<span id="cb10-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  Args:</span></span>
+<span id="cb10-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    target_log_prob_fn (callable): A function that returns the log-probability</span></span>
+<span id="cb10-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                                    of a sample under the target distribution.</span></span>
+<span id="cb10-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    proposal_dist_fn (callable): A function `(center_val) -&gt; distrax.Normal`</span></span>
+<span id="cb10-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                                 that generates the proposal distribution centered at `center_val`.</span></span>
+<span id="cb10-11"></span>
+<span id="cb10-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  Returns:</span></span>
+<span id="cb10-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    A callable `jax.jit` compiled function that performs one step of the Metropolis-Hastings algorithm.</span></span>
+<span id="cb10-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">  """</span></span>
+<span id="cb10-15">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># JIT compile the main step function</span></span>
+<span id="cb10-16">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@jax.jit</span></span>
+<span id="cb10-17">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> metropolis_hastings_step(carry, x): <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># x is a dummy variable from jax.lax.scan's `xs`</span></span>
+<span id="cb10-18">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb10-19"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Performs one step of the Metropolis-Hastings algorithm.</span></span>
+<span id="cb10-20"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    This function now uses the target_log_prob_fn and proposal_dist_fn from its closure.</span></span>
+<span id="cb10-21"></span>
+<span id="cb10-22"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Args:</span></span>
+<span id="cb10-23"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      carry: A tuple containing (current_sample, current_log_prob, rng_key).</span></span>
+<span id="cb10-24"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">             - current_sample (jax.Array): The current value in the MCMC chain.</span></span>
+<span id="cb10-25"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">             - current_log_prob (jax.Array): The log-probability of the current_sample</span></span>
+<span id="cb10-26"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                                             under the target distribution.</span></span>
+<span id="cb10-27"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">             - rng_key (jax.Array): The JAX PRNG key for random operations.</span></span>
+<span id="cb10-28"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      x: A dummy variable from the `elems` sequence of `jax.lax.scan` (unused here).</span></span>
+<span id="cb10-29"></span>
+<span id="cb10-30"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Returns:</span></span>
+<span id="cb10-31"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      A tuple (next_carry, output_value) for `jax.lax.scan`:</span></span>
+<span id="cb10-32"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        - next_carry: (next_sample, next_log_prob, updated_rng_key) for the next iteration.</span></span>
+<span id="cb10-33"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        - output_value: next_sample (the actual sample to be collected).</span></span>
+<span id="cb10-34"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    """</span></span>
+<span id="cb10-35">    current_sample, current_log_prob, rng_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> carry</span>
+<span id="cb10-36"></span>
+<span id="cb10-37">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Split the RNG key for distinct random operations within this step</span></span>
+<span id="cb10-38">    proposal_key, uniform_key, next_rng_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jax.random.split(rng_key, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span>
+<span id="cb10-39"></span>
+<span id="cb10-40">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1. Propose a new candidate sample using the `proposal_dist_fn` from closure.</span></span>
+<span id="cb10-41">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Pass the proposal_key for reproducibility</span></span>
+<span id="cb10-42">    proposed_sample <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> proposal_dist_fn(current_sample).sample(seed<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>proposal_key)</span>
+<span id="cb10-43"></span>
+<span id="cb10-44">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 2. Compute all necessary log probabilities using our nested helper function.</span></span>
+<span id="cb10-45">    (proposed_target_log_prob, _, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># We already have current_log_prob from current_state, so ignore this return</span></span>
+<span id="cb10-46">     log_proposal_forward_prob, log_proposal_reverse_prob) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb10-47">        compute_mh_log_probabilities(current_sample, proposed_sample)</span>
+<span id="cb10-48"></span>
+<span id="cb10-49">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 3. Calculate the Metropolis-Hastings acceptance ratio in log-space</span></span>
+<span id="cb10-50">    log_acceptance_ratio <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (proposed_target_log_prob <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> current_log_prob) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb10-51">                           (log_proposal_reverse_prob <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> log_proposal_forward_prob)</span>
+<span id="cb10-52"></span>
+<span id="cb10-53">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># The acceptance ratio 'alpha' must be between 0 and 1.</span></span>
+<span id="cb10-54">    acceptance_ratio <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.exp(jnp.minimum(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span>, log_acceptance_ratio))</span>
+<span id="cb10-55"></span>
+<span id="cb10-56">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 4. Generate a uniform random number for acceptance check</span></span>
+<span id="cb10-57">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Pass the uniform_key for reproducibility</span></span>
+<span id="cb10-58">    u <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jax.random.uniform(uniform_key, shape<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>current_sample.shape, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>current_sample.dtype)</span>
+<span id="cb10-59"></span>
+<span id="cb10-60">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 5. Decide whether to accept the proposed sample</span></span>
+<span id="cb10-61">    accept <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.less(u, acceptance_ratio)</span>
+<span id="cb10-62"></span>
+<span id="cb10-63">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Select the next sample based on acceptance</span></span>
+<span id="cb10-64">    next_sample <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.where(accept, proposed_sample, current_sample)</span>
+<span id="cb10-65"></span>
+<span id="cb10-66">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Select the log-probability corresponding to the next sample.</span></span>
+<span id="cb10-67">    next_log_prob <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.where(accept, proposed_target_log_prob, current_log_prob)</span>
+<span id="cb10-68"></span>
+<span id="cb10-69">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Return the new carry state (for next iteration) and the sample to collect</span></span>
+<span id="cb10-70">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (next_sample, next_log_prob, next_rng_key), next_sample</span>
+<span id="cb10-71"></span>
+<span id="cb10-72">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> metropolis_hastings_step</span></code></pre></div>
+</div>
+</section>
+<section id="running-the-algorithm" class="level2">
+<h2 class="anchored" data-anchor-id="running-the-algorithm">Running the algorithm</h2>
+<div id="f1d26718" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set the total number of samples to generate</span></span>
+<span id="cb11-2">num_samples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5000</span></span>
+<span id="cb11-3"></span>
+<span id="cb11-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Define the initial state (starting point) of our MCMC chain.</span></span>
+<span id="cb11-5">initial_sample <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jnp.array(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span>, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>jnp.float32)</span>
+<span id="cb11-6">initial_log_prob <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> target_log_prob_fn(initial_sample)</span>
+<span id="cb11-7"></span>
+<span id="cb11-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># The initial_state (carry) for jax.lax.scan is a tuple of (initial_sample, initial_log_prob, initial_rng_key).</span></span>
+<span id="cb11-9">initial_carry <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (initial_sample, initial_log_prob, rng_key)</span></code></pre></div>
+</div>
+<div id="9644a7a3" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create the specific MH step function (which is already JIT-compiled by its factory)</span></span>
+<span id="cb12-2">mh_step_function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> make_metropolis_hastings_step(</span>
+<span id="cb12-3">    target_log_prob_fn, proposal_distribution_fn)</span></code></pre></div>
+</div>
+<div id="67fac632" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%%</span>time </span>
+<span id="cb13-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Starting Metropolis-Hastings sampling for </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>num_samples<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> steps..."</span>)</span>
+<span id="cb13-3"></span>
+<span id="cb13-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Use jax.lax.scan to run the Metropolis-Hastings steps iteratively.</span></span>
+<span id="cb13-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># jax.lax.scan returns (final_carry, accumulated_outputs)</span></span>
+<span id="cb13-6">final_carry, mh_samples_jax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> jax.lax.scan(</span>
+<span id="cb13-7">    f<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>mh_step_function,</span>
+<span id="cb13-8">    init<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>initial_carry,</span>
+<span id="cb13-9">    xs<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>jnp.arange(num_samples) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># A dummy sequence of length num_samples to drive the iterations</span></span>
+<span id="cb13-10">)</span>
+<span id="cb13-11"></span>
+<span id="cb13-12"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Sampling complete!"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Starting Metropolis-Hastings sampling for 5000 steps...
+Sampling complete!
+CPU times: user 460 ms, sys: 20.5 ms, total: 480 ms
+Wall time: 120 ms</code></pre>
+</div>
+</div>
+</section>
+<section id="visualizing-the-results" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-the-results">Visualizing the results</h2>
+<div id="a69df39c" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">mh_samples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array(mh_samples_jax) </span></code></pre></div>
+</div>
+<div id="26c50bec" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb16-2">plt.plot(mh_samples, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'blue'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>)</span>
+<span id="cb16-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Plot the true mean of the data-generating process</span></span>
+<span id="cb16-4">plt.axhline(true_mean.item(), color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'red'</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'--'</span>, linewidth <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'True Mean (Data Generating) (</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>true_mean<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>item()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">)'</span>)</span>
+<span id="cb16-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Plot the estimated mean from the latter part of the MCMC chain (after some burn-in)</span></span>
+<span id="cb16-6">plt.axhline(np.mean(mh_samples[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>:]), color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'orange'</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'--'</span>, linewidth <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Estimated Mean (Post Burn-in) (</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>mean(mh_samples[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>:])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">)'</span>)</span>
+<span id="cb16-7">plt.title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Metropolis-Hastings Trace Plot'</span>)</span>
+<span id="cb16-8">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Iteration'</span>)</span>
+<span id="cb16-9">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Sample Value'</span>)</span>
+<span id="cb16-10">plt.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">':'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>)</span>
+<span id="cb16-11">plt.legend()</span>
+<span id="cb16-12">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/cell-15-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-15-output-1.png" width="725" height="376" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="e3a22427" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb17-2">sns.histplot(mh_samples, bins<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, kde<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, stat<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'density'</span>, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'green'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'MH Samples Density'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>)</span>
+<span id="cb17-3"></span>
+<span id="cb17-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Generate points for the prior PDF</span></span>
+<span id="cb17-5">x_range <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(mh_samples) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(mh_samples) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>)</span>
+<span id="cb17-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Convert JAX array from distrax.prob to NumPy for plotting</span></span>
+<span id="cb17-7">prior_pdf <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array(prior_distribution.prob(jnp.array(x_range)))</span>
+<span id="cb17-8">plt.plot(x_range, prior_pdf, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'red'</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'--'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Prior PDF'</span>)</span>
+<span id="cb17-9"></span>
+<span id="cb17-10">plt.title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Distribution of MH Samples vs. Prior PDF'</span>)</span>
+<span id="cb17-11">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Value'</span>)</span>
+<span id="cb17-12">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Density'</span>)</span>
+<span id="cb17-13">plt.legend()</span>
+<span id="cb17-14">plt.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">':'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>)</span>
+<span id="cb17-15">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/cell-16-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-16-output-1.png" width="738" height="376" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="ce31d535" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1">fig, axes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>))</span>
+<span id="cb18-2">axes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> axes.flatten() <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Flatten the 2x2 array of axes for easy iteration</span></span>
+<span id="cb18-3"></span>
+<span id="cb18-4">iteration_points <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5000</span>]</span>
+<span id="cb18-5"></span>
+<span id="cb18-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># The true posterior calculations are removed as they are rarely available in practice.</span></span>
+<span id="cb18-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># We will compare the MCMC estimates against the true data-generating mean.</span></span>
+<span id="cb18-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># We use the 'true_mean' (4.2) as a reference point for the parameter.</span></span>
+<span id="cb18-9"></span>
+<span id="cb18-10">x_range <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(mh_samples) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(mh_samples) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Keep range based on samples</span></span>
+<span id="cb18-11"></span>
+<span id="cb18-12"></span>
+<span id="cb18-13"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i, num_iters <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">enumerate</span>(iteration_points):</span>
+<span id="cb18-14">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Slice the samples up to the current iteration point</span></span>
+<span id="cb18-15">    current_samples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> mh_samples[:num_iters]</span>
+<span id="cb18-16"></span>
+<span id="cb18-17">    ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> axes[i]</span>
+<span id="cb18-18">    sns.kdeplot(current_samples, ax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>ax, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'blue'</span>, fill<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'MCMC Estimate'</span>)</span>
+<span id="cb18-19">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Plot a vertical line at the true data-generating mean for reference</span></span>
+<span id="cb18-20">    ax.axvline(true_mean.item(), color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'red'</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'--'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'True Data Mean'</span>)</span>
+<span id="cb18-21">    ax.set_title(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'KDE after </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>num_iters<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> Iterations'</span>)</span>
+<span id="cb18-22">    ax.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Parameter Value (X)'</span>)</span>
+<span id="cb18-23">    ax.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Density'</span>)</span>
+<span id="cb18-24">    ax.legend()</span>
+<span id="cb18-25">    ax.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">':'</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>)</span>
+<span id="cb18-26"></span>
+<span id="cb18-27">plt.suptitle(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Evolution of Parameter Distribution with MCMC Iterations'</span>, fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span>, y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.98</span>)</span>
+<span id="cb18-28">plt.tight_layout(rect<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.98</span>]) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Adjust layout to prevent title overlap</span></span>
+<span id="cb18-29">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/cell-17-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-17-output-1.png" width="1142" height="946" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I really like this plot because it shows the intuition behind the algorithm. A well tuned algorithm will slowly converge towards the true underlying parameter value and overpower a flat, uninformative prior.</p>
+<div id="062a0de3" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">--- Sample Statistics ---"</span>)</span>
+<span id="cb19-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Mean of MH samples: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>mean(mh_samples)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb19-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Standard deviation of MH samples: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>std(mh_samples)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb19-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Use .item() for scalar JAX arrays when printing</span></span>
+<span id="cb19-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"True Mean: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>true_mean<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>item()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb19-6"></span>
+<span id="cb19-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Calculate differences between consecutive samples</span></span>
+<span id="cb19-8">diffs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.diff(mh_samples)</span>
+<span id="cb19-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Count where the difference is not zero (i.e., a new sample was accepted)</span></span>
+<span id="cb19-10">accepted_steps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(diffs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb19-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Acceptance rate is the number of accepted steps divided by total steps (excluding initial)</span></span>
+<span id="cb19-12">acceptance_rate <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> accepted_steps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (num_samples <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Subtract 1 because diff reduces length by 1</span></span>
+<span id="cb19-13"></span>
+<span id="cb19-14"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Approximate Acceptance Rate: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>acceptance_rate<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Sample Statistics ---
+Mean of MH samples: 4.1865
+Standard deviation of MH samples: 0.2855
+True Mean: 4.2000
+Approximate Acceptance Rate: 0.2845</code></pre>
+</div>
+</div>
+<section id="thanks-for-reading" class="level3">
+<h3 class="anchored" data-anchor-id="thanks-for-reading">Thanks for reading</h3>
+<p>In my spare time, I like to take photos so I’m going to add one photo I like at the end of each post as a thank you :) <a href="DSC_8579.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Lake District, UK, 2024"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/DSC_8579.jpg" class="img-fluid" alt="Lake District, UK, 2024"></a></p>
+</section>
+</section>
+<section id="footnotes" class="level2">
+<h2 class="anchored" data-anchor-id="footnotes">Footnotes</h2>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>If you want a formal description of the algorithm, you can find it on the <a href="https://en.wikipedia.org/wiki/Metropolis–Hastings_algorithm">Wikepedia page</a>.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>probability</category>
+  <category>python</category>
+  <category>Bayesian</category>
+  <guid>https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/</guid>
+  <pubDate>Thu, 26 Jun 2025 23:00:00 GMT</pubDate>
+  <media:content url="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/DSC_8579.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Conditional probabilities are partial function applications</title>
   <dc:creator>Alin Morariu</dc:creator>
