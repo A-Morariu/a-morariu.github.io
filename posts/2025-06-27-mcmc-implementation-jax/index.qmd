@@ -436,3 +436,7 @@ In my spare time, I like to take photos so I'm going to add one photo I like at 
 
 ## Footnotes 
 [^1]: If you want a formal description of the algorithm, you can find it on the [Wikepedia page](https://en.wikipedia.org/wiki/Metropolis–Hastings_algorithm).
+
+:::{.callout-note}
+Documentation for functions was written with help from Google's Gemini platform.
+:::

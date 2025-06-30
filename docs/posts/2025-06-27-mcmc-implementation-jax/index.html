@@ -304,7 +304,7 @@ Note
 </section>
 <section id="data-simulation" class="level2">
 <h2 class="anchored" data-anchor-id="data-simulation">Data simulation</h2>
-<div id="4756ee44" class="cell" data-execution_count="1">
+<div id="8450f72b" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> distrax</span>
@@ -316,7 +316,7 @@ Note
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Callable, Tuple</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We need some observed data so we will simulate it from a 1-dimensional Gaussian distribution.</p>
-<div id="6317e14e" class="cell" data-execution_count="2">
+<div id="5a738e1a" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rng_key <span class="op">=</span> jax.random.PRNGKey(<span class="dv">20250627</span>) <span class="co"># use a fixed seed for reproducibility</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># define the parameters of our *true* data-generating model</span></span>
@@ -332,7 +332,7 @@ Note
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>observed_data <span class="op">=</span> model.sample(seed <span class="op">=</span> rng_key, sample_shape<span class="op">=</span>(<span class="dv">40</span>,))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="ea153175" class="cell" data-execution_count="3">
+<div id="fa707d5f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the observed data - think of this as exploratory data analysis</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">4</span>))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sns.histplot(observed_data, bins<span class="op">=</span><span class="dv">30</span>, kde<span class="op">=</span><span class="va">False</span>, stat<span class="op">=</span><span class="st">'density'</span>, color<span class="op">=</span><span class="st">'green'</span>, label<span class="op">=</span><span class="st">'Observed Data Density'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
@@ -378,14 +378,14 @@ Note
 <p>In a data science workflow, we won’t know for sure that our model is correct since the data is not simulated. So from here on, we will pretend that we do not <em>know</em> the data is normal, but instead <em>assume</em> that it is.</p>
 </div>
 </div>
-<div id="bc7b437c" class="cell" data-execution_count="4">
+<div id="98cff884" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the flat prior distribution (Normal(0, 10^2) for the parameter mu)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>prior_mean <span class="op">=</span> jnp.array(<span class="fl">0.0</span>, dtype<span class="op">=</span>jnp.float32)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>prior_stddev <span class="op">=</span> jnp.array(<span class="fl">10.0</span>, dtype<span class="op">=</span>jnp.float32)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>prior_distribution <span class="op">=</span> distrax.Normal(loc<span class="op">=</span>prior_mean, scale<span class="op">=</span>prior_stddev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="91a6d44c" class="cell" data-execution_count="5">
+<div id="88a837f1" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_target_log_prob_fn(prior_dist: distrax.Distribution, </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                                  obs_data: jax.Array, </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                                  obs_likelihood_stddev: jax.Array):</span>
@@ -424,7 +424,7 @@ Note
 <span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> target_log_prob_fn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s test that it works.</p>
-<div id="f3d4dbc9" class="cell" data-execution_count="6">
+<div id="60f17da4" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the specific target_log_prob_callable using our defined prior, observed data, and likelihood stddev.</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>target_log_prob_fn <span class="op">=</span> make_target_log_prob_fn(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    prior_distribution, observed_data, true_stddev)</span>
@@ -442,7 +442,7 @@ Log-posterior at 6.0: -101.6034</code></pre>
 <section id="a-modular-solution" class="level2">
 <h2 class="anchored" data-anchor-id="a-modular-solution">A modular solution</h2>
 <p>The goal in this implementation is to “section” off parts of the algorithm that we can allocate to a function that does one thing (a specialist of sorts). The most obvious candidate for this is the proposal function <span class="math inline">\(Q(x'|x; \sigma)\)</span>.</p>
-<div id="21ca9815" class="cell" data-execution_count="7">
+<div id="4cc7e8dc" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>proposal_stddev <span class="op">=</span> jnp.array(<span class="fl">1.0</span>, dtype<span class="op">=</span>jnp.float32)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_proposal_distribution_fn(proposal_stddev_val):</span>
@@ -468,7 +468,7 @@ Log-posterior at 6.0: -101.6034</code></pre>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>proposal_distribution_fn <span class="op">=</span> make_proposal_distribution_fn(proposal_stddev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Since the algorithm requires several probability evaluations, I liked the idea of bundling up these calculations into one function (this can be better implemented by having an individual function for each probability since that would be an easier system to unit test).</p>
-<div id="451d92ab" class="cell" data-execution_count="8">
+<div id="d4b7a995" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_compute_mh_log_probabilities(target_log_prob_fn, proposal_dist_fn):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compute_mh_log_probabilities(current_sample, proposed_sample):</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
@@ -511,7 +511,7 @@ Log-posterior at 6.0: -101.6034</code></pre>
 <span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And finally for the algorithm!</p>
-<div id="cb996c63" class="cell" data-execution_count="9">
+<div id="21484689" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_metropolis_hastings_step(target_log_prob_fn, proposal_dist_fn):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">"""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">  Factory function to create a Metropolis-Hastings step function with a closure</span></span>
@@ -588,7 +588,7 @@ Log-posterior at 6.0: -101.6034</code></pre>
 </section>
 <section id="running-the-algorithm" class="level2">
 <h2 class="anchored" data-anchor-id="running-the-algorithm">Running the algorithm</h2>
-<div id="f1d26718" class="cell" data-execution_count="10">
+<div id="fa7aead9" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the total number of samples to generate</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>num_samples <span class="op">=</span> <span class="dv">5000</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -599,12 +599,12 @@ Log-posterior at 6.0: -101.6034</code></pre>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># The initial_state (carry) for jax.lax.scan is a tuple of (initial_sample, initial_log_prob, initial_rng_key).</span></span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>initial_carry <span class="op">=</span> (initial_sample, initial_log_prob, rng_key)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="9644a7a3" class="cell" data-execution_count="11">
+<div id="7185b2af" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the specific MH step function (which is already JIT-compiled by its factory)</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>mh_step_function <span class="op">=</span> make_metropolis_hastings_step(</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    target_log_prob_fn, proposal_distribution_fn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="67fac632" class="cell" data-execution_count="12">
+<div id="ebdef1f7" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time </span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Starting Metropolis-Hastings sampling for </span><span class="sc">{</span>num_samples<span class="sc">}</span><span class="ss"> steps..."</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -620,17 +620,17 @@ Log-posterior at 6.0: -101.6034</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Starting Metropolis-Hastings sampling for 5000 steps...
 Sampling complete!
-CPU times: user 460 ms, sys: 20.5 ms, total: 480 ms
-Wall time: 120 ms</code></pre>
+CPU times: user 439 ms, sys: 21.5 ms, total: 461 ms
+Wall time: 110 ms</code></pre>
 </div>
 </div>
 </section>
 <section id="visualizing-the-results" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-the-results">Visualizing the results</h2>
-<div id="a69df39c" class="cell" data-execution_count="13">
+<div id="54e11d67" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mh_samples <span class="op">=</span> np.array(mh_samples_jax) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="26c50bec" class="cell" data-execution_count="14">
+<div id="f7a21166" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">4</span>))</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>plt.plot(mh_samples, color<span class="op">=</span><span class="st">'blue'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the true mean of the data-generating process</span></span>
@@ -651,7 +651,7 @@ Wall time: 120 ms</code></pre>
 </div>
 </div>
 </div>
-<div id="e3a22427" class="cell" data-execution_count="15">
+<div id="43e05570" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">4</span>))</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>sns.histplot(mh_samples, bins<span class="op">=</span><span class="dv">50</span>, kde<span class="op">=</span><span class="va">True</span>, stat<span class="op">=</span><span class="st">'density'</span>, color<span class="op">=</span><span class="st">'green'</span>, label<span class="op">=</span><span class="st">'MH Samples Density'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -675,7 +675,7 @@ Wall time: 120 ms</code></pre>
 </div>
 </div>
 </div>
-<div id="ce31d535" class="cell" data-execution_count="16">
+<div id="fa8f824e" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">10</span>))</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>axes <span class="op">=</span> axes.flatten() <span class="co"># Flatten the 2x2 array of axes for easy iteration</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -714,7 +714,7 @@ Wall time: 120 ms</code></pre>
 </div>
 </div>
 <p>I really like this plot because it shows the intuition behind the algorithm. A well tuned algorithm will slowly converge towards the true underlying parameter value and overpower a flat, uninformative prior.</p>
-<div id="062a0de3" class="cell" data-execution_count="17">
+<div id="14f99a86" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- Sample Statistics ---"</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean of MH samples: </span><span class="sc">{</span>np<span class="sc">.</span>mean(mh_samples)<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Standard deviation of MH samples: </span><span class="sc">{</span>np<span class="sc">.</span>std(mh_samples)<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
@@ -745,6 +745,19 @@ Approximate Acceptance Rate: 0.2845</code></pre>
 </section>
 <section id="footnotes" class="level2">
 <h2 class="anchored" data-anchor-id="footnotes">Footnotes</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Documentation for functions was written with help from Google’s Gemini platform.</p>
+</div>
+</div>
 
 
 </section>
