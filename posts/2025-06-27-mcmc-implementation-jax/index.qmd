@@ -57,7 +57,7 @@ from typing import Callable, Tuple
 
 We need some observed data so we will simulate it from a 1-dimensional Gaussian distribution.
 ```{python}
-rng_key = jax.random.PRNGKey(20250627) # use a fixed seed for reproducibility
+rng_key = jax.random.key(20250627) # use a fixed seed for reproducibility
 
 # define the parameters of our *true* data-generating model
 # true_mean is what we are aiming to "discover"/estimate through MCMC

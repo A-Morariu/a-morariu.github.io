@@ -50,7 +50,7 @@ Note
 </section>
 <section id="data-simulation" class="level2">
 <h2 class="anchored" data-anchor-id="data-simulation">Data simulation</h2>
-<div id="8450f72b" class="cell" data-execution_count="1">
+<div id="aa5f8438" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> jax</span>
@@ -88,10 +88,10 @@ background-color: null;
 font-style: inherit;">import</span> Callable, Tuple</span></code></pre></div>
 </div>
 <p>We need some observed data so we will simulate it from a 1-dimensional Gaussian distribution.</p>
-<div id="5a738e1a" class="cell" data-execution_count="2">
+<div id="ba9b68b6" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">rng_key <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> jax.random.PRNGKey(<span class="dv" style="color: #AD0000;
+font-style: inherit;">=</span> jax.random.key(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">20250627</span>) <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -152,7 +152,7 @@ font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">40</span>,))</span></code></pre></div>
 </div>
-<div id="fa707d5f" class="cell" data-execution_count="3">
+<div id="62bb8f41" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># plot the observed data - think of this as exploratory data analysis</span></span>
@@ -212,7 +212,7 @@ font-style: inherit;">0.6</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-4-output-1.png" width="738" height="376" class="figure-img"></a></p>
+<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -244,7 +244,7 @@ Note
 <p>In a data science workflow, we won’t know for sure that our model is correct since the data is not simulated. So from here on, we will pretend that we do not <em>know</em> the data is normal, but instead <em>assume</em> that it is.</p>
 </div>
 </div>
-<div id="98cff884" class="cell" data-execution_count="4">
+<div id="e758a02f" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># create the flat prior distribution (Normal(0, 10^2) for the parameter mu)</span></span>
@@ -271,7 +271,7 @@ font-style: inherit;">=</span>prior_mean, scale<span class="op" style="color: #5
 background-color: null;
 font-style: inherit;">=</span>prior_stddev)</span></code></pre></div>
 </div>
-<div id="88a837f1" class="cell" data-execution_count="5">
+<div id="b2a3cc1e" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -382,7 +382,7 @@ font-weight: bold;
 font-style: inherit;">return</span> target_log_prob_fn</span></code></pre></div>
 </div>
 <p>Let’s test that it works.</p>
-<div id="60f17da4" class="cell" data-execution_count="6">
+<div id="48c71ea9" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># create the specific target_log_prob_callable using our defined prior, observed data, and likelihood stddev.</span></span>
@@ -442,7 +442,7 @@ Log-posterior at 6.0: -101.6034</code></pre>
 <section id="a-modular-solution" class="level2">
 <h2 class="anchored" data-anchor-id="a-modular-solution">A modular solution</h2>
 <p>The goal in this implementation is to “section” off parts of the algorithm that we can allocate to a function that does one thing (a specialist of sorts). The most obvious candidate for this is the proposal function <img src="https://latex.codecogs.com/png.latex?Q(x'%7Cx;%20%5Csigma)">.</p>
-<div id="4cc7e8dc" class="cell" data-execution_count="7">
+<div id="efbec9b1" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">proposal_stddev <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> jnp.array(<span class="fl" style="color: #AD0000;
@@ -518,7 +518,7 @@ background-color: null;
 font-style: inherit;">=</span> make_proposal_distribution_fn(proposal_stddev)</span></code></pre></div>
 </div>
 <p>Since the algorithm requires several probability evaluations, I liked the idea of bundling up these calculations into one function (this can be better implemented by having an individual function for each probability since that would be an easier system to unit test).</p>
-<div id="d4b7a995" class="cell" data-execution_count="8">
+<div id="55bef345" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -621,7 +621,7 @@ font-style: inherit;">=</span> make_compute_mh_log_probabilities(</span>
 <span id="cb9-40">    )</span></code></pre></div>
 </div>
 <p>And finally for the algorithm!</p>
-<div id="21484689" class="cell" data-execution_count="9">
+<div id="939df710" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -834,7 +834,7 @@ font-style: inherit;">return</span> metropolis_hastings_step</span></code></pre>
 </section>
 <section id="running-the-algorithm" class="level2">
 <h2 class="anchored" data-anchor-id="running-the-algorithm">Running the algorithm</h2>
-<div id="fa7aead9" class="cell" data-execution_count="10">
+<div id="b88addc0" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Set the total number of samples to generate</span></span>
@@ -865,7 +865,7 @@ font-style: inherit;"># The initial_state (carry) for jax.lax.scan is a tuple of
 background-color: null;
 font-style: inherit;">=</span> (initial_sample, initial_log_prob, rng_key)</span></code></pre></div>
 </div>
-<div id="7185b2af" class="cell" data-execution_count="11">
+<div id="1a816f38" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Create the specific MH step function (which is already JIT-compiled by its factory)</span></span>
@@ -874,7 +874,7 @@ background-color: null;
 font-style: inherit;">=</span> make_metropolis_hastings_step(</span>
 <span id="cb12-3">    target_log_prob_fn, proposal_distribution_fn)</span></code></pre></div>
 </div>
-<div id="ebdef1f7" class="cell" data-execution_count="12">
+<div id="da9b9771" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%%</span>time </span>
@@ -920,19 +920,19 @@ font-style: inherit;">"Sampling complete!"</span>)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Starting Metropolis-Hastings sampling for 5000 steps...
 Sampling complete!
-CPU times: user 439 ms, sys: 21.5 ms, total: 461 ms
-Wall time: 110 ms</code></pre>
+CPU times: user 260 ms, sys: 20.7 ms, total: 280 ms
+Wall time: 133 ms</code></pre>
 </div>
 </div>
 </section>
 <section id="visualizing-the-results" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-the-results">Visualizing the results</h2>
-<div id="54e11d67" class="cell" data-execution_count="13">
+<div id="7800fde7" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">mh_samples <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.array(mh_samples_jax) </span></code></pre></div>
 </div>
-<div id="f7a21166" class="cell" data-execution_count="14">
+<div id="17d633b1" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
@@ -1034,12 +1034,12 @@ font-style: inherit;">0.6</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/cell-15-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-15-output-1.png" width="725" height="376" class="figure-img"></a></p>
+<p><a href="index_files/figure-html/cell-15-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="43e05570" class="cell" data-execution_count="15">
+<div id="953f200a" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
@@ -1138,12 +1138,12 @@ font-style: inherit;">0.6</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/cell-16-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-16-output-1.png" width="738" height="376" class="figure-img"></a></p>
+<p><a href="index_files/figure-html/cell-16-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="fa8f824e" class="cell" data-execution_count="16">
+<div id="b6e443eb" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1">fig, axes <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;
@@ -1312,13 +1312,13 @@ font-style: inherit;"># Adjust layout to prevent title overlap</span></span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="index_files/figure-html/cell-17-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-17-output-1.png" width="1142" height="946" class="figure-img"></a></p>
+<p><a href="index_files/figure-html/cell-17-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></a></p>
 </figure>
 </div>
 </div>
 </div>
 <p>I really like this plot because it shows the intuition behind the algorithm. A well tuned algorithm will slowly converge towards the true underlying parameter value and overpower a flat, uninformative prior.</p>
-<div id="14f99a86" class="cell" data-execution_count="17">
+<div id="70e91727" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">print</span>(<span class="st" style="color: #20794D;

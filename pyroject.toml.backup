@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "personal-website"
+version = "0.1.0"
+description = "Files for building my website with Quarto"
+authors = ["Alin Morariu <36674219+A-Morariu@users.noreply.github.com>"]
+readme = "README.md"
+package-mode = false 
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13.0"
+numpy = ">=1.23.5,<2.0.0"
+pandas = "^2.2"
+matplotlib = "^3.9.2"
+seaborn = "^0.13.2"
+quarto = "^0.1.0"
+jupyter = "^1.1.1"
+scipy = "^1.14.1"
+gemlib = "^0.13.1"
+jax = "^0.6.2"
+distrax = "^0.1.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
