@@ -27,12 +27,18 @@ Hi, I’m Alin! Welcome to my website. I will be using this site as a way to dis
 
 # A bit about me
 
-I am a PhD student at Lancaster University in the UK, currently supervised by [Prof. Chris Jewell](https://scholar.google.com/citations?user=BF1RFL8AAAAJ&hl=en) and [Prof. Paul Fearnhead](https://scholar.google.co.uk/citations?user=_21NhC8AAAAJ&hl=en). My research focuses on computational challenges for fitting stochastic epidemic models, specifically MCMC algorithms spatio-temporal models for spread of disease. 
+I am a Senior Research Associate in [MARS](https://www.lancaster.ac.uk/mathematics-for-ai-in-real-world-systems/) at Lancaster University. Generally, my research focuses on developing Bayesian inference methods and computational tools for infectious disease modelling. This includes topics in: 
+
+- Markov Chain Monte Carlo (including data augmentation)
+- Filtering algorithms 
+- Spatio-temporal models
+- Deep-learning methods for accelerated inference (neural posterior estimators, diffusion models)
+
 :::
 
 ::: {.grid}
 
-::: {.g-col-6}
+::: {.g-col-12}
 
 ## Research interests
 
@@ -49,25 +55,6 @@ Bayesian methods provide robust estimation for complex models where analytical s
 ::: {.callout-note collapse="true" icon="false"}
 ### Parallel and high performance computing
 One of the best ways to increase the efficiency of fitting models is to take advantage of modern hardware like GPUs and HPC clusters. This can be done by implementing algorithms so they can be run in parallel across more than one device. 
-:::
-
-:::
-
-::: {.g-col-6}
-
-## Personal and hobbies
-::: {.callout-note collapse="true" icon="false"}
-### Cycling
-A very famous man once said "I like to ride my bicycle" and I think he was on to something there.
-:::
-::: {.callout-note collapse="true" icon="false"}
-### Photography
-I take picture... mostly with a very little camera. 
-:::
-
-::: {.callout-note collapse="true" icon="false"}
-### Coffee
-Everything is better with a cup of coffee... especially writing a blog post!
 :::
 
 :::

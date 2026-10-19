@@ -1,52 +1,31 @@
 [
   {
-    "objectID": "posts.html",
-    "href": "posts.html",
-    "title": "My Blog",
+    "objectID": "talks/index_talk_template.html",
+    "href": "talks/index_talk_template.html",
+    "title": "Talk title",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nMetropolis algorithm in JAX\n\n\n7 min\n\n\n\nprobability\n\n\npython\n\n\nBayesian\n\n\n\nSomeone asked me to code this for some reason\n\n\n\nNov 20, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMetropolis-Hastings in JAX\n\n\n15 min\n\n\n\nprobability\n\n\npython\n\n\nBayesian\n\n\n\nAdd a dash of performance to classical statistics\n\n\n\nJun 27, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nConditional probabilities are partial function applications\n\n\n7 min\n\n\n\nprobability\n\n\npython\n\n\n\nI’m going to try to convince you that conditional probabilities are easy.\n\n\n\nSep 30, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSimulating an epidemic\n\n\n10 min\n\n\n\nepidemics\n\n\nsimulation\n\n\n\nWe take a look at the popular (and simple) chain-binomial model for simulating an epidemic\n\n\n\nJul 1, 2024\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Your abstract"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Alin Morariu",
+    "objectID": "talks/index_talk_template.html#abstract",
+    "href": "talks/index_talk_template.html#abstract",
+    "title": "Talk title",
     "section": "",
-    "text": "Github\n  \n  \n    \n     Google Scholar\n  \n\n  \n  \n\nprint(my_intro)\n\nHi, I’m Alin! Welcome to my website. I will be using this site as a way to display some of my work and interests. You can find some of my projects, talks, and the occasional blog post about stuff I’ve found cool and thought was worth sharing.\n\n\nI am a PhD student at Lancaster University in the UK, currently supervised by Prof. Chris Jewell and Prof. Paul Fearnhead. My research focuses on computational challenges for fitting stochastic epidemic models, specifically MCMC algorithms spatio-temporal models for spread of disease."
+    "text": "Your abstract"
   },
   {
-    "objectID": "index.html#research-interests",
-    "href": "index.html#research-interests",
-    "title": "Alin Morariu",
-    "section": "Research interests",
-    "text": "Research interests\n\n\n\n\n\n\nEpidemic modelling\n\n\n\n\n\nEpidemic models provide useful insight into how we can manage the spread of disease in both human and animal populations. They can be powerful tools for public policy and pose interesting computational challenges.\n\n\n\n\n\n\n\n\n\nLikelihood inference and MCMC\n\n\n\n\n\nBayesian methods provide robust estimation for complex models where analytical solutions are often infeasible. They allow for exploration of high-dimensional parameter spaces\n\n\n\n\n\n\n\n\n\nParallel and high performance computing\n\n\n\n\n\nOne of the best ways to increase the efficiency of fitting models is to take advantage of modern hardware like GPUs and HPC clusters. This can be done by implementing algorithms so they can be run in parallel across more than one device."
-  },
-  {
-    "objectID": "index.html#personal-and-hobbies",
-    "href": "index.html#personal-and-hobbies",
-    "title": "Alin Morariu",
-    "section": "Personal and hobbies",
-    "text": "Personal and hobbies\n\n\n\n\n\n\nCycling\n\n\n\n\n\nA very famous man once said “I like to ride my bicycle” and I think he was on to something there.\n\n\n\n\n\n\n\n\n\nPhotography\n\n\n\n\n\nI take picture… mostly with a very little camera.\n\n\n\n\n\n\n\n\n\nCoffee\n\n\n\n\n\nEverything is better with a cup of coffee… especially writing a blog post!"
-  },
-  {
-    "objectID": "talks/2024-01-31-Pydata-software-banks/index.html",
-    "href": "talks/2024-01-31-Pydata-software-banks/index.html",
-    "title": "From code banks to software",
-    "section": "",
-    "text": "As coders, we often build up vast amounts of code that can be used repeatedly and potentially shared with others to make their lives easier. How can we turn those banks of code into libraries? This talk will explore the journey I took to becoming a software developer and the lessons I learned along the way as someone who was not a computer scientist first."
-  },
-  {
-    "objectID": "talks/2024-01-31-Pydata-software-banks/index.html#abstract",
-    "href": "talks/2024-01-31-Pydata-software-banks/index.html#abstract",
-    "title": "From code banks to software",
-    "section": "",
-    "text": "As coders, we often build up vast amounts of code that can be used repeatedly and potentially shared with others to make their lives easier. How can we turn those banks of code into libraries? This talk will explore the journey I took to becoming a software developer and the lessons I learned along the way as someone who was not a computer scientist first."
-  },
-  {
-    "objectID": "talks/2024-01-31-Pydata-software-banks/index.html#slides",
-    "href": "talks/2024-01-31-Pydata-software-banks/index.html#slides",
-    "title": "From code banks to software",
+    "objectID": "talks/index_talk_template.html#slides",
+    "href": "talks/index_talk_template.html#slides",
+    "title": "Talk title",
     "section": "Slides",
     "text": "Slides\n\n\n\n\n\n Full Screen"
+  },
+  {
+    "objectID": "talks.html",
+    "href": "talks.html",
+    "title": "Talks",
+    "section": "",
+    "text": "Talks\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFrom code banks to software\n\n\n\n\n\nExploring the lifeline of a coding project and key decisions developers must make along the way\n\n\n\n\n\nJan 31, 2024\n\n\nAlin Morariu\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/2025-06-27-mcmc-implementation-jax/index.html",
@@ -103,6 +82,55 @@
     "title": "Metropolis-Hastings in JAX",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nIf you want a formal description of the algorithm, you can find it on the Wikepedia page.↩︎"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Alin Morariu",
+    "section": "",
+    "text": "Github\n  \n  \n    \n     Google Scholar\n  \n\n  \n  \n\nprint(my_intro)\n\nHi, I’m Alin! Welcome to my website. I will be using this site as a way to display some of my work and interests. You can find some of my projects, talks, and the occasional blog post about stuff I’ve found cool and thought was worth sharing.\n\n\nI am a Senior Research Associate in MARS at Lancaster University. Generally, my research focuses on developing Bayesian inference methods and computational tools for infectious disease modelling. This includes topics in:\n\nMarkov Chain Monte Carlo (including data augmentation)\nFiltering algorithms\nSpatio-temporal models\nDeep-learning methods for accelerated inference (neural posterior estimators, diffusion models)"
+  },
+  {
+    "objectID": "index.html#research-interests",
+    "href": "index.html#research-interests",
+    "title": "Alin Morariu",
+    "section": "Research interests",
+    "text": "Research interests\n\n\n\n\n\n\nEpidemic modelling\n\n\n\n\n\nEpidemic models provide useful insight into how we can manage the spread of disease in both human and animal populations. They can be powerful tools for public policy and pose interesting computational challenges.\n\n\n\n\n\n\n\n\n\nLikelihood inference and MCMC\n\n\n\n\n\nBayesian methods provide robust estimation for complex models where analytical solutions are often infeasible. They allow for exploration of high-dimensional parameter spaces\n\n\n\n\n\n\n\n\n\nParallel and high performance computing\n\n\n\n\n\nOne of the best ways to increase the efficiency of fitting models is to take advantage of modern hardware like GPUs and HPC clusters. This can be done by implementing algorithms so they can be run in parallel across more than one device."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "I’m a PhD student at Lancaster University with an interest in Bayesian statistics and all the computational aspects that come along with that. This includes inference algorithms like MCMC, probablistic programming, efficient implementations, and software for making this more accessible. In the past, I’ve worked as a data scientist and analyst in the finance industry as well as a researcher in a hospital.\n\n\nLancaster University | Lancaster, UK PhD in Statistics | Jan 2022 - Dec 2025\nToronto Metropolitan Univeristy | Toronto, Canada MSc in Applied Mathematics | Sept 2019 - June 2021\nUniversity of Toronto, St George | Toronto, Canada HBSc in Statistics and Mathematics | Sept 2014 - June 2019\n\n\n\nMy previous work experience can be found on my resume or my LinkedIn"
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "About",
+    "section": "",
+    "text": "Lancaster University | Lancaster, UK PhD in Statistics | Jan 2022 - Dec 2025\nToronto Metropolitan Univeristy | Toronto, Canada MSc in Applied Mathematics | Sept 2019 - June 2021\nUniversity of Toronto, St George | Toronto, Canada HBSc in Statistics and Mathematics | Sept 2014 - June 2019"
+  },
+  {
+    "objectID": "about.html#experience",
+    "href": "about.html#experience",
+    "title": "About",
+    "section": "",
+    "text": "My previous work experience can be found on my resume or my LinkedIn"
+  },
+  {
+    "objectID": "about.html#get-in-touch",
+    "href": "about.html#get-in-touch",
+    "title": "About",
+    "section": "Get in touch!",
+    "text": "Get in touch!\nBest ways of contacting me is through email!\n\\(\\rightarrow\\) a.morariu@lancaster.ac.uk\\(\\leftarrow\\)"
+  },
+  {
+    "objectID": "posts.html",
+    "href": "posts.html",
+    "title": "My Blog",
+    "section": "",
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nMetropolis algorithm in JAX\n\n\n7 min\n\n\n\nprobability\n\n\npython\n\n\nBayesian\n\n\n\nSomeone asked me to code this for some reason\n\n\n\nNov 20, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMetropolis-Hastings in JAX\n\n\n15 min\n\n\n\nprobability\n\n\npython\n\n\nBayesian\n\n\n\nAdd a dash of performance to classical statistics\n\n\n\nJun 27, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nConditional probabilities are partial function applications\n\n\n7 min\n\n\n\nprobability\n\n\npython\n\n\n\nI’m going to try to convince you that conditional probabilities are easy.\n\n\n\nSep 30, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nGit for PhD\n\n\n4 min\n\n\n\nsoftware\n\n\ndev\n\n\ngit\n\n\n\nGit is an invaluable tool that is used to manage code bases, why don’t we use it for PhD?\n\n\n\nJul 11, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSimulating an epidemic\n\n\n10 min\n\n\n\nepidemics\n\n\nsimulation\n\n\n\nWe take a look at the popular (and simple) chain-binomial model for simulating an epidemic\n\n\n\nJul 1, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nblog post title\n\n\n1 min\n\n\n\nother\n\n\n\nblog post description (appears underneath the title in smaller text) which is included on the listing page\n\n\n\nJan 1, 2024\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/2024-07-01-simulating-epidemics/index.html",
@@ -210,59 +238,24 @@
     "text": "Repeated kernel applications\nThe last step is to build a function which acts as the “driver” for the sampler to produce the \\(N\\)-many iterations. We do this using the `jax.lax.scan’ function which performs the following operation:\nscan :: (c -&gt; a -&gt; (c, b)) -&gt; c -&gt; [a] -&gt; (c, [b])\nThe key is that the output is a List structure that contains all of the intermediate states.\n\ndef run_mcmc(\n    N: int,\n    one_step_fn: Callable,\n    init_carry: Tuple[jnp.float64, jr.PRNGKey],\n):\n    \"\"\"\n    Runs the Metropolis MCMC algorithm for a given number of iterations.\n\n    Args:\n        N (int): The number of iterations to run the MCMC chain.\n        one_step_fn (Callable): A function that performs one step of the\n            Metropolis MCMC algorithm.\n        init_carry (Tuple[jnp.float64, jr.PRNGKey]): A tuple containing the\n            initial state (x0) and the initial JAX PRNGKey.\n\n    Returns:\n        Tuple[Tuple[jnp.float64, jr.PRNGKey], jnp.ndarray]: A tuple containing:\n            - final_carry (Tuple[jnp.float64, jr.PRNGKey]): The final state and\n              PRNGKey after N iterations.\n            - states (jnp.ndarray): An array of sampled states from the MCMC chain.\n    \"\"\"\n    final_carry, states = jax.lax.scan(one_step_fn, init=init_carry, xs=None, length=N)\n\n    return final_carry, states\n\nLets now run the MCMC!\n\ninit_carry = (10.0, jr.key(1))\n\n_, samples = run_mcmc(N=5000, one_step_fn=my_one_step, init_carry=init_carry)\n\n\n# plot test run\nplt.plot(samples, color = 'navy', alpha = 0.6, label = 'Posterior samples')\nplt.hlines(y = jnp.mean(samples), xmin = 0, xmax= 5000, color=\"orange\", label = 'Posterior mean')\n\ntxt = f' Acceptance rate: {(1- jnp.mean(samples[1:] == samples[:-1])):.4f}'\nplt.title(r'Posterior samples with $\\tau$ = 4.4, $x^{(0)}$ = 10' + txt)\n\nplt.show()\n\n\n\n\n\n\n\n\nWe now have machinery that is highly reusable because of the functional form each takes. We can change any of the functions and the changes will trickle through nicely! It’d be a good exercise to draw a diagram of all of the functions and trace through their interactions.\nThis blog is part of a bigger series on MCMC and how to code various samplers. Stay tuned for a follow up on an adaptive version of this algorithm that changes the code so we don’t need to worry about manually tuning the sampler.\n\nThanks for reading\nIn my spare time, I like to take photos so I’m going to add one photo I like at the end of each post as a thank you :)"
   },
   {
-    "objectID": "talks.html",
-    "href": "talks.html",
-    "title": "Talks",
+    "objectID": "talks/2024-01-31-Pydata-software-banks/index.html",
+    "href": "talks/2024-01-31-Pydata-software-banks/index.html",
+    "title": "From code banks to software",
     "section": "",
-    "text": "Talks\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFrom code banks to software\n\n\n\n\n\nExploring the lifeline of a coding project and key decisions developers must make along the way\n\n\n\n\n\nJan 31, 2024\n\n\nAlin Morariu\n\n\n\n\n\n\nNo matching items"
+    "text": "As coders, we often build up vast amounts of code that can be used repeatedly and potentially shared with others to make their lives easier. How can we turn those banks of code into libraries? This talk will explore the journey I took to becoming a software developer and the lessons I learned along the way as someone who was not a computer scientist first."
   },
   {
-    "objectID": "talks/index_talk_template.html",
-    "href": "talks/index_talk_template.html",
-    "title": "Talk title",
+    "objectID": "talks/2024-01-31-Pydata-software-banks/index.html#abstract",
+    "href": "talks/2024-01-31-Pydata-software-banks/index.html#abstract",
+    "title": "From code banks to software",
     "section": "",
-    "text": "Your abstract"
+    "text": "As coders, we often build up vast amounts of code that can be used repeatedly and potentially shared with others to make their lives easier. How can we turn those banks of code into libraries? This talk will explore the journey I took to becoming a software developer and the lessons I learned along the way as someone who was not a computer scientist first."
   },
   {
-    "objectID": "talks/index_talk_template.html#abstract",
-    "href": "talks/index_talk_template.html#abstract",
-    "title": "Talk title",
-    "section": "",
-    "text": "Your abstract"
-  },
-  {
-    "objectID": "talks/index_talk_template.html#slides",
-    "href": "talks/index_talk_template.html#slides",
-    "title": "Talk title",
+    "objectID": "talks/2024-01-31-Pydata-software-banks/index.html#slides",
+    "href": "talks/2024-01-31-Pydata-software-banks/index.html#slides",
+    "title": "From code banks to software",
     "section": "Slides",
     "text": "Slides\n\n\n\n\n\n Full Screen"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "I’m a PhD student at Lancaster University with an interest in Bayesian statistics and all the computational aspects that come along with that. This includes inference algorithms like MCMC, probablistic programming, efficient implementations, and software for making this more accessible. In the past, I’ve worked as a data scientist and analyst in the finance industry as well as a researcher in a hospital.\n\n\nLancaster University | Lancaster, UK PhD in Statistics | Jan 2022 - Dec 2025\nToronto Metropolitan Univeristy | Toronto, Canada MSc in Applied Mathematics | Sept 2019 - June 2021\nUniversity of Toronto, St George | Toronto, Canada HBSc in Statistics and Mathematics | Sept 2014 - June 2019\n\n\n\nMy previous work experience can be found on my resume or my LinkedIn"
-  },
-  {
-    "objectID": "about.html#education",
-    "href": "about.html#education",
-    "title": "About",
-    "section": "",
-    "text": "Lancaster University | Lancaster, UK PhD in Statistics | Jan 2022 - Dec 2025\nToronto Metropolitan Univeristy | Toronto, Canada MSc in Applied Mathematics | Sept 2019 - June 2021\nUniversity of Toronto, St George | Toronto, Canada HBSc in Statistics and Mathematics | Sept 2014 - June 2019"
-  },
-  {
-    "objectID": "about.html#experience",
-    "href": "about.html#experience",
-    "title": "About",
-    "section": "",
-    "text": "My previous work experience can be found on my resume or my LinkedIn"
-  },
-  {
-    "objectID": "about.html#get-in-touch",
-    "href": "about.html#get-in-touch",
-    "title": "About",
-    "section": "Get in touch!",
-    "text": "Get in touch!\nBest ways of contacting me is through email!\n\\(\\rightarrow\\) a.morariu@lancaster.ac.uk\\(\\leftarrow\\)"
   }
 ]

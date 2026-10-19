@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://a-morariu.github.io/posts.html</loc>
-    <lastmod>2025-04-05T17:11:53.139Z</lastmod>
+    <loc>https://a-morariu.github.io/talks/index_talk_template.html</loc>
+    <lastmod>2025-04-05T17:11:53.176Z</lastmod>
   </url>
   <url>
-    <loc>https://a-morariu.github.io/index.html</loc>
-    <lastmod>2025-04-05T21:43:45.782Z</lastmod>
-  </url>
-  <url>
-    <loc>https://a-morariu.github.io/talks/2024-01-31-Pydata-software-banks/index.html</loc>
-    <lastmod>2025-04-05T17:11:53.175Z</lastmod>
+    <loc>https://a-morariu.github.io/talks.html</loc>
+    <lastmod>2025-04-05T17:11:53.173Z</lastmod>
   </url>
   <url>
     <loc>https://a-morariu.github.io/posts/2025-06-27-mcmc-implementation-jax/index.html</loc>
     <lastmod>2025-11-21T22:27:15.604Z</lastmod>
+  </url>
+  <url>
+    <loc>https://a-morariu.github.io/index.html</loc>
+    <lastmod>2026-10-19T11:25:28.808Z</lastmod>
+  </url>
+  <url>
+    <loc>https://a-morariu.github.io/about.html</loc>
+    <lastmod>2025-04-05T17:11:53.032Z</lastmod>
+  </url>
+  <url>
+    <loc>https://a-morariu.github.io/posts.html</loc>
+    <lastmod>2025-04-05T17:11:53.139Z</lastmod>
   </url>
   <url>
     <loc>https://a-morariu.github.io/posts/2024-07-01-simulating-epidemics/index.html</loc>
@@ -29,15 +37,7 @@
     <lastmod>2025-11-24T14:07:30.235Z</lastmod>
   </url>
   <url>
-    <loc>https://a-morariu.github.io/talks.html</loc>
-    <lastmod>2025-04-05T17:11:53.173Z</lastmod>
-  </url>
-  <url>
-    <loc>https://a-morariu.github.io/talks/index_talk_template.html</loc>
-    <lastmod>2025-04-05T17:11:53.176Z</lastmod>
-  </url>
-  <url>
-    <loc>https://a-morariu.github.io/about.html</loc>
-    <lastmod>2025-04-05T17:11:53.032Z</lastmod>
+    <loc>https://a-morariu.github.io/talks/2024-01-31-Pydata-software-banks/index.html</loc>
+    <lastmod>2025-04-05T17:11:53.175Z</lastmod>
   </url>
 </urlset>
